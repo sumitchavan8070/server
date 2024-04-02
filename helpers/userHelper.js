@@ -1,0 +1,1 @@
+exports.comparePassword = (password, confirmPassword) => {};
