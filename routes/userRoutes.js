@@ -23,6 +23,7 @@ const {
   createQuestion,
   addSubject,
 } = require("../controllers/questionPaperController");
+const { addUserPost } = require("../controllers/userPostController");
 
 const router = express.Router();
 
@@ -69,5 +70,8 @@ router.post("/add-question", createQuestion);
 
 //Add Subject
 router.post("/add-subject", addSubject);
+
+//add user post
+router.post("/add-user-post", addUserPost);
 
 module.exports = router;
