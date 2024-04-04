@@ -34,4 +34,22 @@ const isPostApproved = async (req, res) => {
   }
 };
 
-module.exports = { getPoll, isPostApproved };
+// Server-side code to handle deletion of polls
+
+// Endpoint to delete a poll
+const deletePoll = async (req, res) => {
+  const { id } = req.params;
+
+  // Perform the deletion of the poll in the database
+  Poll.findByIdAndDelete(id, (err, deletedPoll) => {
+    if (err) {
+      return res.status(500).json({ error: "Error deleting poll" });
+    }
+    if (!deletedPoll) {
+      return res.status(404).json({ error: "Poll not found" });
+    }
+    res.json({ message: "Poll deleted successfully" });
+  });
+};
+
+module.exports = { getPoll, isPostApproved, deletePoll };
