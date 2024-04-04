@@ -32,6 +32,12 @@ const userPostSchema = new mongoose.Schema({
         return this.type === "poll"; // Make options required only for 'poll' type posts
       },
     },
+    answer: {
+      type: String, // Add answer field for polls
+      required: function () {
+        return this.type === "poll"; // Make answer required only for 'poll' type posts
+      },
+    },
     votes: {
       type: Map,
       of: Number,
