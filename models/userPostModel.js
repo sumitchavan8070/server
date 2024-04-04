@@ -15,6 +15,10 @@ const userPostSchema = new mongoose.Schema({
     enum: ["text", "poll"], // Specify the types of posts, including 'poll'
     default: "text", // Default type is 'text'
   },
+  approved: {
+    type: Boolean,
+    default: false, // Default status is not approved
+  },
   poll: {
     question: {
       type: String,
