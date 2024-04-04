@@ -40,16 +40,16 @@ const isPostApproved = async (req, res) => {
 const deletePoll = async (req, res) => {
   const { id } = req.params;
 
-  // Perform the deletion of the poll in the database
-  await UserPost.findByIdAndDelete(id, (err, deletedPoll) => {
-    if (err) {
-      return res.status(500).json({ error: "Error deleting poll" });
-    }
+  try {
+    const deletedPoll = await UserPost.findByIdAndDelete(id);
     if (!deletedPoll) {
       return res.status(404).json({ error: "Poll not found" });
     }
     res.json({ message: "Poll deleted successfully" });
-  });
+  } catch (error) {
+    console.error("Error deleting poll:", error);
+    res.status(500).json({ error: "Error deleting poll" });
+  }
 };
 
 module.exports = { getPoll, isPostApproved, deletePoll };
