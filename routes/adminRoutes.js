@@ -6,7 +6,7 @@ const {
 
 const router = express.Router();
 
-router.get("/admin/polls", getPoll);
-router.get("/admin/polls/:postId", isPostApproved);
+router.get("/polls", getPoll);
+router.get("/polls/:postId", isPostApproved);
 
 module.exports = router;
