@@ -41,7 +41,7 @@ const deletePoll = async (req, res) => {
   const { id } = req.params;
 
   // Perform the deletion of the poll in the database
-  Poll.findByIdAndDelete(id, (err, deletedPoll) => {
+  await UserPost.findByIdAndDelete(id, (err, deletedPoll) => {
     if (err) {
       return res.status(500).json({ error: "Error deleting poll" });
     }
