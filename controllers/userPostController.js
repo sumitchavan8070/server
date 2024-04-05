@@ -93,19 +93,26 @@ const updateVote = async (req, res) => {
       return res.status(404).json({ error: "Poll not found" });
     }
 
-    // Check if the user has already voted
-    if (poll.poll.votes && poll.poll.votes[userId]) {
-      return res.status(400).json({ error: "User has already voted" });
+    // Check if the user has already voted on this poll
+    if (poll.poll.votes[userId]) {
+      return res
+        .status(400)
+        .json({ error: "User has already voted on this poll" });
+    }
+
+    // Find the selected option in the poll
+    const selectedOption = poll.poll.options.find((opt) => opt === option);
+    if (!selectedOption) {
+      return res.status(400).json({ error: "Invalid option" });
     }
 
     // Update the vote count for the selected option
-    if (poll.poll.options.includes(option)) {
-      poll.poll.votes[userId] = option;
-      await poll.save();
-      res.json({ success: true, message: "Vote recorded successfully" });
-    } else {
-      res.status(400).json({ error: "Invalid option" });
-    }
+    poll.poll.votes.set(userId, option); // Set the user's vote in the Map
+    await poll.save(); // Save the updated poll
+
+    // Send the updated poll back as response
+    const updatedPoll = await userPostModel.findById(pollId);
+    res.json({ poll: updatedPoll.poll });
   } catch (error) {
     console.error("Error updating vote:", error);
     res.status(500).json({ error: "Internal server error" });
