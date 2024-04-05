@@ -40,34 +40,72 @@ const getApprovedPosts = async (req, res) => {
   }
 };
 
+// const updateVote = async (req, res) => {
+//   const { pollId } = req.params;
+//   const { option, userId } = req.body;
+
+//   try {
+//     // Check if the user has already voted on this poll
+//     const poll = await userPostModel.findById(pollId);
+//     if (!poll) {
+//       return res.status(404).json({ error: "Poll not found" });
+//     }
+
+//     if (poll.poll.votes[userId]) {
+//       return res
+//         .status(400)
+//         .json({ error: "User has already voted on this poll" });
+//     }
+
+//     // Update the vote count based on the selected option
+//     const selectedOption = poll.poll.options.find((opt) => opt === option);
+//     if (!selectedOption) {
+//       return res.status(400).json({ error: "Invalid option" });
+//     }
+
+//     selectedOption.votes += 1;
+//     poll.poll.votes[userId] = option;
+
+//     // Save the updated poll
+//     await poll.save();
+
+//     // Send the updated poll with total votes back as response
+//     const updatedPoll = await userPostModel.findById(pollId);
+//     const totalVotes = updatedPoll.poll.options.reduce(
+//       (total, opt) => total + opt.votes,
+//       0
+//     );
+//     res.json({ poll: updatedPoll.poll, totalVotes });
+//   } catch (error) {
+//     console.error("Error updating vote:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 const updateVote = async (req, res) => {
   const { pollId } = req.params;
-  const { option } = req.body;
+  const { option, userId } = req.body;
 
   try {
-    const post = await userPostModel.findById(pollId);
-    if (!post) {
+    // Find the poll by ID
+    const poll = await userPostModel.findById(pollId);
+    if (!poll) {
       return res.status(404).json({ error: "Poll not found" });
     }
 
-    const poll = post.poll; // Access the nested poll object
-    console.log("Original poll:", poll);
-
-    const selectedOption = poll.options.find((opt) => opt === option);
-    if (!selectedOption) {
-      return res.status(400).json({ error: "Invalid option" });
+    // Check if the user has already voted
+    if (poll.votes[userId]) {
+      return res.status(400).json({ error: "User has already voted" });
     }
 
-    // Increment the votes for the selected option
-    poll.votes[option] = (poll.votes[option] || 0) + 1;
-
-    console.log("Updated poll:", poll);
-
-    // Save the updated post (which includes the updated poll)
-    await post.save();
-
-    // Send the updated poll back as response
-    res.json({ poll });
+    // Update the vote count for the selected option
+    if (poll.poll.options.includes(option)) {
+      poll.poll.votes[userId] = option;
+      await poll.save();
+      res.json({ success: true, message: "Vote recorded successfully" });
+    } else {
+      res.status(400).json({ error: "Invalid option" });
+    }
   } catch (error) {
     console.error("Error updating vote:", error);
     res.status(500).json({ error: "Internal server error" });
