@@ -39,8 +39,15 @@ const userPostSchema = new mongoose.Schema({
       },
     },
     votes: {
-      type: Object, // Use plain JavaScript object instead of Map
-      default: {}, // Object to store votes for each option
+      type: Map,
+      of: {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User", // Reference to the User model
+        },
+        selectedOption: String,
+      },
+      default: {}, // Map to store votes for each option
     },
   },
   // Other fields as needed
