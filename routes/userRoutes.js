@@ -26,6 +26,7 @@ const {
 const {
   addUserPost,
   getApprovedPosts,
+  updateVote,
 } = require("../controllers/userPostController");
 
 const router = express.Router();
@@ -79,5 +80,8 @@ router.post("/add-user-post", addUserPost);
 
 // Route to get approved posts
 router.get("/approved-posts", getApprovedPosts);
+
+//Update Vote
+router.put("/:pollId", updateVote);
 
 module.exports = router;
