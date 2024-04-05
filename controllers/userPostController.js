@@ -45,24 +45,29 @@ const updateVote = async (req, res) => {
   const { option } = req.body;
 
   try {
-    const poll = await userPostModel.findById(pollId);
-    if (!poll) {
+    const post = await userPostModel.findById(pollId);
+    if (!post) {
       return res.status(404).json({ error: "Poll not found" });
     }
 
-    // Find the selected option and update its votes
-    const selectedOption = poll.poll.options.find((opt) => opt === option);
+    const poll = post.poll; // Access the nested poll object
+    console.log("Original poll:", poll);
+
+    const selectedOption = poll.options.find((opt) => opt === option);
     if (!selectedOption) {
       return res.status(400).json({ error: "Invalid option" });
     }
-    selectedOption.votes += 1;
 
-    // Save the updated poll
-    await poll.save();
+    // Increment the votes for the selected option
+    poll.votes[option] = (poll.votes[option] || 0) + 1;
+
+    console.log("Updated poll:", poll);
+
+    // Save the updated post (which includes the updated poll)
+    await post.save();
 
     // Send the updated poll back as response
-    const updatedPoll = await userPostModel.findById(pollId);
-    res.json({ poll: updatedPoll });
+    res.json({ poll });
   } catch (error) {
     console.error("Error updating vote:", error);
     res.status(500).json({ error: "Internal server error" });
