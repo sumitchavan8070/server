@@ -50,6 +50,11 @@ const updateVote = async (req, res) => {
       return res.status(404).json({ error: "Poll not found" });
     }
 
+    // Check if poll.options is an array before iterating
+    if (!Array.isArray(poll.options)) {
+      return res.status(500).json({ error: "Poll options are not valid" });
+    }
+
     // Update the vote count based on the selected option
     poll.options.forEach((opt) => {
       if (opt.option === option) {
