@@ -12,45 +12,38 @@ const userPostSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["text", "poll"], // Specify the types of posts, including 'poll'
-    default: "text", // Default type is 'text'
+    enum: ["text", "poll"],
+    default: "text",
   },
   approved: {
     type: Boolean,
-    default: false, // Default status is not approved
+    default: false,
   },
   poll: {
     question: {
       type: String,
       required: function () {
-        return this.type === "poll"; // Make question required only for 'poll' type posts
+        return this.type === "poll";
       },
     },
     options: {
-      type: [String], // Array of strings for options
+      type: [String],
       required: function () {
-        return this.type === "poll"; // Make options required only for 'poll' type posts
+        return this.type === "poll";
       },
     },
     answer: {
-      type: String, // Add answer field for polls
+      type: String,
       required: function () {
-        return this.type === "poll"; // Make answer required only for 'poll' type posts
+        return this.type === "poll";
       },
     },
     votes: {
-      type: Map,
-      of: {
-        userId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User", // Reference to the User model
-        },
-        selectedOption: String,
-      },
-      default: {}, // Map to store votes for each option
+      type: Map, // Change this to Map or Object as per your preference
+      of: String, // Change this to String or Number as per your preference
+      default: {},
     },
   },
-  // Other fields as needed
 });
 
 // Create the UserPost model based on the schema
