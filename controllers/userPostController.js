@@ -50,28 +50,19 @@ const updateVote = async (req, res) => {
       return res.status(404).json({ error: "Poll not found" });
     }
 
-    // Check if poll.options is an array before iterating
-    if (!Array.isArray(poll.options)) {
-      return res.status(500).json({ error: "Poll options are not valid" });
+    // Find the selected option and update its votes
+    const selectedOption = poll.poll.options.find((opt) => opt === option);
+    if (!selectedOption) {
+      return res.status(400).json({ error: "Invalid option" });
     }
-
-    // Update the vote count based on the selected option
-    poll.options.forEach((opt) => {
-      if (opt.option === option) {
-        opt.votes += 1;
-      }
-    });
+    selectedOption.votes += 1;
 
     // Save the updated poll
     await poll.save();
 
-    // Send the updated poll with total votes back as response
+    // Send the updated poll back as response
     const updatedPoll = await userPostModel.findById(pollId);
-    const totalVotes = updatedPoll.options.reduce(
-      (total, opt) => total + opt.votes,
-      0
-    );
-    res.json({ poll: updatedPoll, totalVotes });
+    res.json({ poll: updatedPoll });
   } catch (error) {
     console.error("Error updating vote:", error);
     res.status(500).json({ error: "Internal server error" });
