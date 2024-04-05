@@ -23,7 +23,10 @@ const {
   createQuestion,
   addSubject,
 } = require("../controllers/questionPaperController");
-const { addUserPost } = require("../controllers/userPostController");
+const {
+  addUserPost,
+  getApprovedPosts,
+} = require("../controllers/userPostController");
 
 const router = express.Router();
 
@@ -73,5 +76,8 @@ router.post("/add-subject", addSubject);
 
 //add user post
 router.post("/add-user-post", addUserPost);
+
+// Route to get approved posts
+router.get("/approved-posts", getApprovedPosts);
 
 module.exports = router;
