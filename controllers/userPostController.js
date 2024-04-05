@@ -40,4 +40,37 @@ const getApprovedPosts = async (req, res) => {
   }
 };
 
-module.exports = { addUserPost, getApprovedPosts };
+const updateVote = async (req, res) => {
+  const { pollId } = req.params;
+  const { option } = req.body;
+
+  try {
+    const poll = await userPostModel.findById(pollId);
+    if (!poll) {
+      return res.status(404).json({ error: "Poll not found" });
+    }
+
+    // Update the vote count based on the selected option
+    poll.options.forEach((opt) => {
+      if (opt.option === option) {
+        opt.votes += 1;
+      }
+    });
+
+    // Save the updated poll
+    await poll.save();
+
+    // Send the updated poll with total votes back as response
+    const updatedPoll = await userPostModel.findById(pollId);
+    const totalVotes = updatedPoll.options.reduce(
+      (total, opt) => total + opt.votes,
+      0
+    );
+    res.json({ poll: updatedPoll, totalVotes });
+  } catch (error) {
+    console.error("Error updating vote:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+module.exports = { addUserPost, getApprovedPosts, updateVote };
