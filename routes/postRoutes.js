@@ -17,4 +17,6 @@ router.put("/:id", postController.updatePost);
 // Delete a post by ID
 router.delete("/:id", postController.deletePost);
 
+router.get("/approved-posts", postController.getApprovedPosts);
+
 module.exports = router;
