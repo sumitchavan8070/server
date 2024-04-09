@@ -27,7 +27,7 @@ const addUserPost = async (req, res) => {
 };
 
 // Controller to get approved posts
-const getApprovedPosts = async (req, res) => {
+const getApprovedPolls = async (req, res) => {
   try {
     const approvedPosts = await userPostModel.find({ approved: true });
 
@@ -119,4 +119,4 @@ const updateVote = async (req, res) => {
   }
 };
 
-module.exports = { addUserPost, getApprovedPosts, updateVote };
+module.exports = { addUserPost, getApprovedPolls, updateVote };
