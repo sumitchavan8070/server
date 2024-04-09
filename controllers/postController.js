@@ -74,3 +74,13 @@ exports.deletePost = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get approved posts
+exports.getApprovedPosts = async (req, res) => {
+  try {
+    const approvedPosts = await Post.find({ approved: true });
+    res.json(approvedPosts);
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching approved posts" });
+  }
+};
