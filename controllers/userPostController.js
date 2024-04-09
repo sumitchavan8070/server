@@ -29,9 +29,9 @@ const addUserPost = async (req, res) => {
 // Controller to get approved posts
 const getApprovedPolls = async (req, res) => {
   try {
-    const approvedPosts = await userPostModel.find({ approved: true });
+    const approvedPolls = await userPostModel.find({ approved: true });
 
-    res.status(200).json({ success: true, posts: approvedPosts });
+    res.status(200).json({ success: true, polls: approvedPolls });
   } catch (error) {
     console.error("Error fetching approved posts:", error);
     res
