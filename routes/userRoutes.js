@@ -82,7 +82,7 @@ router.post("/add-subject", addSubject);
 router.post("/add-user-post", addUserPost);
 
 // Route to get approved posts
-router.get("/approved-posts", getApprovedPosts);
+router.get("/approved-polls", getApprovedPosts);
 
 //Update Vote
 router.put("/:pollId", updateVote);
