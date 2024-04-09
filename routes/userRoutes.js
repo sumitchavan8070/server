@@ -25,12 +25,13 @@ const {
 } = require("../controllers/questionPaperController");
 const {
   addUserPost,
-  getApprovedPosts,
   updateVote,
+  getApprovedPolls,
 } = require("../controllers/userPostController");
 const {
   deleteImageFromCloudinary,
 } = require("../controllers/cloudinaryController");
+const { getApprovedPosts } = require("../controllers/postController");
 
 const router = express.Router();
 
@@ -82,12 +83,14 @@ router.post("/add-subject", addSubject);
 router.post("/add-user-post", addUserPost);
 
 // Route to get approved posts
-router.get("/approved-polls", getApprovedPosts);
+router.get("/approved-polls", getApprovedPolls);
 
 //Update Vote
 router.put("/:pollId", updateVote);
 
 //Delete Image from the Cloudinary
 router.delete("/delete-image", deleteImageFromCloudinary);
+
+router.get("/approved-posts", getApprovedPosts);
 
 module.exports = router;
