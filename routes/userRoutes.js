@@ -28,6 +28,9 @@ const {
   getApprovedPosts,
   updateVote,
 } = require("../controllers/userPostController");
+const {
+  deleteImageFromCloudinary,
+} = require("../controllers/cloudinaryController");
 
 const router = express.Router();
 
@@ -83,5 +86,8 @@ router.get("/approved-posts", getApprovedPosts);
 
 //Update Vote
 router.put("/:pollId", updateVote);
+
+//Delete Image from the Cloudinary
+router.delete("/delete-image", deleteImageFromCloudinary);
 
 module.exports = router;
