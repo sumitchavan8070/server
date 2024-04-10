@@ -2,6 +2,7 @@ const express = require("express");
 const {
   registerController,
   loginController,
+  getUserById,
 } = require("../controllers/userController");
 const {
   createExamCat,
@@ -92,5 +93,8 @@ router.put("/:pollId", updateVote);
 router.delete("/delete-image", deleteImageFromCloudinary);
 
 router.get("/approved-posts", getApprovedPosts);
+
+//Get User Profile by Id
+router.get("/:id", getUserById);
 
 module.exports = router;
