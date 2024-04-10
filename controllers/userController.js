@@ -156,7 +156,7 @@ const getUserById = async (req, res) => {
   const userId = req.params.id;
 
   try {
-    const user = await User.findById(userId);
+    const user = await userModel.findById(userId);
     if (!user) {
       return res
         .status(404)
