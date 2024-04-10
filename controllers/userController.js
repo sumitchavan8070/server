@@ -151,9 +151,28 @@ const updateUserController = async (req, res) => {
   }
 };
 
+// Controller function to get a user by ID
+const getUserById = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.error("Error fetching user by ID:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 module.exports = {
   //requireSingIn,
   registerController,
   loginController,
   updateUserController,
+  getUserById,
 };
