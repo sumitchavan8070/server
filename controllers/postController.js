@@ -3,11 +3,11 @@ const Post = require("../models/PostModel");
 // Create a new post
 exports.createPost = async (req, res) => {
   try {
-    const { imageUrl, description, userId, isSponsored, approved } = req.body;
+    const { imageUrl, description, postedBy, isSponsored, approved } = req.body;
     const post = new Post({
       imageUrl,
       description,
-      userId,
+      postedBy,
       isSponsored,
       approved,
     });
