@@ -2,13 +2,14 @@ const userPostModel = require("../models/userPostModel");
 
 const addUserPost = async (req, res) => {
   try {
-    const { title, content, type, poll } = req.body;
+    const { title, content, type, postedBy, poll } = req.body;
 
     // Create a new UserPost instance based on the request body
     const newPost = new userPostModel({
       title,
       content,
       type,
+      postedBy,
       poll,
     });
 
