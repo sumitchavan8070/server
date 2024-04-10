@@ -19,6 +19,11 @@ const userPostSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  postedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   poll: {
     question: {
       type: String,
