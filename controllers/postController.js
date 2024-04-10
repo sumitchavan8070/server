@@ -84,3 +84,39 @@ exports.getApprovedPosts = async (req, res) => {
     res.status(500).json({ error: "Error fetching approved posts" });
   }
 };
+
+exports.likePost = async (req, res) => {
+  const { postId } = req.params;
+  const { userId } = req.body;
+
+  try {
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+    }
+
+    // Check if the user has already liked the post
+    const isLiked = post.likes.some(
+      (like) => like.userId.toString() === userId
+    );
+
+    if (isLiked) {
+      // Unlike the post
+      post.likes = post.likes.filter(
+        (like) => like.userId.toString() !== userId
+      );
+    } else {
+      // Like the post
+      post.likes.push({ userId });
+    }
+
+    const updatedPost = await post.save();
+    res.status(200).json({ success: true, post: updatedPost });
+  } catch (error) {
+    console.error("Error updating likes:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
