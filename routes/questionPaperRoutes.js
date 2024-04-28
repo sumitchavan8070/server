@@ -5,6 +5,8 @@ const questionPaperController = require("../controllers/newQuestionPaperControll
 // Route to create a new question paper
 router.post("/create-question", questionPaperController.createQuestionPaper);
 
+router.post("/main-test", questionPaperController.createMainExamTestPaper);
+
 // Route to update a question paper by ID
 router.put("/:id", questionPaperController.updateQuestionPaper);
 
