@@ -142,7 +142,7 @@ const generateUniqueId = async (prefix) => {
 
 const isTestIdUnique = async (TestId) => {
   // console.log("Checking uniqueness for TestId:", TestId);
-  const existingTest = await CustomTest.findOne({ testId: TestId });
+  const existingTest = await MainTest.findOne({ testId: TestId });
   return !existingTest;
 };
 
