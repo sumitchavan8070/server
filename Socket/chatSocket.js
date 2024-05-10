@@ -97,6 +97,8 @@ const sendNotification = async (notificationData) => {
           let notificationPayload = {
             roomId: notificationData.chatId,
             roomName: notificationData.roomData.name,
+            receiverIds: userId,
+
             // Add other properties to the payload as needed
           };
 
