@@ -80,6 +80,30 @@ const registerController = async (req, res) => {
   }
 };
 
+// Assuming you're using Node.js with Express
+const updateUserFCMToken = async (req, res) => {
+  const { userId } = req.params;
+  const { fcmToken } = req.body;
+
+  try {
+    // Find user by ID and update the FCM token
+    const user = await userModel.findByIdAndUpdate(
+      userId,
+      { fcmToken },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating FCM token:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 //login
 const loginController = async (req, res) => {
   try {
@@ -194,4 +218,5 @@ module.exports = {
   loginController,
   updateUserController,
   getUserById,
+  updateUserFCMToken,
 };
