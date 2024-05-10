@@ -79,28 +79,28 @@ module.exports = (io) => {
 };
 
 const sendNotification = async (notificationData) => {
-  console.log("notification data received", JSON.stringify(notificationData));
+  console.log("notification data received", notificationData);
 
   try {
-    // let findUser = await UserModel.findById(notificationData?.userId);
-    let findUser = await UserModel.findById(notificationData?.user._id);
+    const members = notificationData.roomData.members;
+    console.log("Members:", members);
 
-    console.log("findUserfindUser", findUser);
-    if (!!findUser?.fcmToken) {
+    // Construct an array of member IDs
+    const receiverIds = members.map((member) => member.userId);
+    console.log("Receiver IDs:", receiverIds);
+
+    if (receiverIds.length > 0) {
       let notificationPayload = {
-        roomId: notificationData?.chatId,
-        roomName: findUser.username,
-        // receiverIds: notificationData?.userId,
-        receiverIds: notificationData?.roomData.members.userId,
-
-        // type: notificationData.roomData.type,
+        roomId: notificationData.chatId,
+        roomName: notificationData.roomData.name,
+        receiverIds: receiverIds,
+        // You can add other properties to the payload as needed
       };
 
-        console.log("notification payload", JSON.stringify(notificationPayload));
-
-
+      // Send the notification to all members
       let res = await firebase.messaging().send({
-        token: findUser?.fcmToken,
+        // You might need to send the notification individually to each member instead of using a single token
+        // token: firstMember?.fcmToken,
         notification: {
           title: "New Message",
           body: notificationData.text,
@@ -111,12 +111,13 @@ const sendNotification = async (notificationData) => {
           data: JSON.stringify(notificationPayload),
         },
       });
-      console.log("notification send successfully...!!!!", res);
+      console.log("Notification sent successfully to all members...!!!!", res);
     }
   } catch (error) {
-    console.log("notification failed", error);
+    console.log("Notification failed", error);
   }
 };
+
 
 // const sendNotification = async (notificationData) => {
 //   console.log("notification data received", notificationData);
