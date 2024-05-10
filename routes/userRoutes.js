@@ -3,6 +3,7 @@ const {
   registerController,
   loginController,
   getUserById,
+  updateUserFCMToken,
 } = require("../controllers/userController");
 const {
   createExamCat,
@@ -42,6 +43,8 @@ router.post("/register", registerController);
 
 // LOGIN || POST
 router.post("/login", loginController);
+
+router.put("/fcm/:userId/update", updateUserFCMToken);
 
 //UPDATE || PUT
 //router.put("/update-user", requireSingIn, updateUserController);
