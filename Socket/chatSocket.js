@@ -91,10 +91,13 @@ const sendNotification = async (notificationData) => {
         roomId: notificationData?.chatId,
         roomName: findUser.username,
         // receiverIds: notificationData?.userId,
-        receiverIds: notificationData?.roomData.members._id,
+        receiverIds: notificationData?.roomData.members.userId,
 
         // type: notificationData.roomData.type,
       };
+
+        console.log("notification payload", JSON.stringify(notificationPayload));
+
 
       let res = await firebase.messaging().send({
         token: findUser?.fcmToken,
