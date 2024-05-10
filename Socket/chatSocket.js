@@ -85,8 +85,8 @@ const sendNotification = async (notificationData) => {
     const members = notificationData.roomData.members;
     console.log("Members:", members);
 
-    // Construct an array of member IDs
-    const receiverIds = members.map((member) => member.userId);
+    // Construct an array of member IDs excluding the sender's ID
+    const receiverIds = members.map((member) => member.userId !== notificationData.user._id ? member.userId : null).filter(Boolean);
     console.log("Receiver IDs:", receiverIds);
 
     if (receiverIds.length > 0) {
@@ -98,12 +98,10 @@ const sendNotification = async (notificationData) => {
             roomId: notificationData.chatId,
             roomName: notificationData.roomData.name,
             receiverIds: userId,
-
             // Add other properties to the payload as needed
           };
 
-            console.log("notification payload ===> ", notificationPayload);
-
+          console.log("notification payload ===> ", notificationPayload);
 
           // Send the notification to each member individually
           let res = await firebase.messaging().send({
