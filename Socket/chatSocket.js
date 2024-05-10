@@ -79,7 +79,7 @@ module.exports = (io) => {
 };
 
 const sendNotification = async (notificationData) => {
-  console.log("notification data received", JSON.strigify(notificationData);
+  console.log("notification data received", JSON.strigify(notificationData));
 
   try {
     // let findUser = await UserModel.findById(notificationData?.userId);
