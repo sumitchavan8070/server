@@ -115,45 +115,84 @@ module.exports = (io) => {
 //   }
 // };
 
+// const sendNotification = async (notificationData) => {
+//   console.log("notification data received", notificationData);
+
+//   try {
+//     // Fetch all members of the group based on chatId (groupId)
+//     let groupMembers = await UserModel.find({
+//       _id: { $in: notificationData.roomData.members },
+//     });
+//     console.log("groupMembers", groupMembers);
+
+//     // Loop through each member and send a notification
+//     for (let member of groupMembers) {
+//       if (!!member?.fcmToken) {
+//         let notificationPayload = {
+//           roomId: notificationData.chatId,
+//           roomName: member.username,
+//         };
+
+//         let res = await firebase.messaging().send({
+//           token: member?.fcmToken,
+//           notification: {
+//             title: "New Message",
+//             body: notificationData.text,
+//           },
+//           data: {
+//             notification_type: "chat",
+//             navigationId: "messages",
+//             data: JSON.stringify(notificationPayload),
+//           },
+//         });
+//         console.log(
+//           "Notification sent successfully to",
+//           member.username,
+//           "Response:",
+//           res
+//         );
+//       }
+//     }
+//   } catch (error) {
+//     console.log("Notification failed", error);
+//   }
+// };
+
 const sendNotification = async (notificationData) => {
   console.log("notification data received", notificationData);
 
   try {
-    // Fetch all members of the group based on chatId (groupId)
-    let groupMembers = await UserModel.find({
-      _id: { $in: notificationData.roomData.members },
-    });
-    console.log("groupMembers", groupMembers);
+    // Get the ID of the sender
+    const senderId = notificationData.user._id;
 
-    // Loop through each member and send a notification
-    for (let member of groupMembers) {
-      if (!!member?.fcmToken) {
-        let notificationPayload = {
-          roomId: notificationData.chatId,
-          roomName: member.username,
-        };
+    // Iterate through the group members to send notifications
+    notificationData.roomData.members.forEach(async (member) => {
+      // Skip sending notification to the sender
+      if (member._id !== senderId) {
+        if (!!member?.fcmToken) {
+          let notificationPayload = {
+            roomId: notificationData.chatId,
+            roomName: member.username, // Use member's username for roomName
+          };
 
-        let res = await firebase.messaging().send({
-          token: member?.fcmToken,
-          notification: {
-            title: "New Message",
-            body: notificationData.text,
-          },
-          data: {
-            notification_type: "chat",
-            navigationId: "messages",
-            data: JSON.stringify(notificationPayload),
-          },
-        });
-        console.log(
-          "Notification sent successfully to",
-          member.username,
-          "Response:",
-          res
-        );
+          let res = await firebase.messaging().send({
+            token: member?.fcmToken,
+            notification: {
+              title: "New Message",
+              body: notificationData.text,
+            },
+            data: {
+              notification_type: "chat",
+              navigationId: "messages",
+              data: JSON.stringify(notificationPayload),
+            },
+          });
+          console.log("notification sent successfully to", member.username, res);
+        }
       }
-    }
+    });
   } catch (error) {
-    console.log("Notification failed", error);
+    console.log("notification failed", error);
   }
 };
+
