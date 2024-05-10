@@ -102,6 +102,9 @@ const sendNotification = async (notificationData) => {
             // Add other properties to the payload as needed
           };
 
+            console.log("notification payload ===> ", notificationPayload);
+
+
           // Send the notification to each member individually
           let res = await firebase.messaging().send({
             token: user.fcmToken,
