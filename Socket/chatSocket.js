@@ -90,28 +90,32 @@ const sendNotification = async (notificationData) => {
     console.log("Receiver IDs:", receiverIds);
 
     if (receiverIds.length > 0) {
-      let notificationPayload = {
-        roomId: notificationData.chatId,
-        roomName: notificationData.roomData.name,
-        receiverIds: receiverIds,
-        // You can add other properties to the payload as needed
-      };
+      for (const userId of receiverIds) {
+        let user = await UserModel.findById(userId);
 
-      // Send the notification to all members
-      let res = await firebase.messaging().send({
-        // You might need to send the notification individually to each member instead of using a single token
-        // token: firstMember?.fcmToken,
-        notification: {
-          title: "New Message",
-          body: notificationData.text,
-        },
-        data: {
-          notification_type: "chat",
-          navigationId: "messages",
-          data: JSON.stringify(notificationPayload),
-        },
-      });
-      console.log("Notification sent successfully to all members...!!!!", res);
+        if (!!user?.fcmToken) {
+          let notificationPayload = {
+            roomId: notificationData.chatId,
+            roomName: notificationData.roomData.name,
+            // Add other properties to the payload as needed
+          };
+
+          // Send the notification to each member individually
+          let res = await firebase.messaging().send({
+            token: user.fcmToken,
+            notification: {
+              title: "New Message",
+              body: notificationData.text,
+            },
+            data: {
+              notification_type: "chat",
+              navigationId: "messages",
+              data: JSON.stringify(notificationPayload),
+            },
+          });
+          console.log("Notification sent successfully to", user.username, res);
+        }
+      }
     }
   } catch (error) {
     console.log("Notification failed", error);
