@@ -78,42 +78,42 @@ module.exports = (io) => {
   });
 };
 
-// const sendNotification = async (notificationData) => {
-//   console.log("notification data received", notificationData);
+const sendNotification = async (notificationData) => {
+  console.log("notification data received", notificationData);
 
-//   try {
-//     // let findUser = await UserModel.findById(notificationData?.userId);
-//     let findUser = await UserModel.findById(notificationData?.user._id);
+  try {
+    // let findUser = await UserModel.findById(notificationData?.userId);
+    let findUser = await UserModel.findById(notificationData?.user._id);
 
-//     console.log("findUserfindUser", findUser);
-//     if (!!findUser?.fcmToken) {
-//       let notificationPayload = {
-//         roomId: notificationData?.chatId,
-//         roomName: findUser.username,
-//         // receiverIds: notificationData?.userId,
-//         // receiverIds: notificationData?.roomData.members,
+    console.log("findUserfindUser", findUser);
+    if (!!findUser?.fcmToken) {
+      let notificationPayload = {
+        roomId: notificationData?.chatId,
+        roomName: findUser.username,
+        // receiverIds: notificationData?.userId,
+        // receiverIds: notificationData?.roomData.members,
 
-//         // type: notificationData.roomData.type,
-//       };
+        // type: notificationData.roomData.type,
+      };
 
-//       let res = await firebase.messaging().send({
-//         token: findUser?.fcmToken,
-//         notification: {
-//           title: "New Message",
-//           body: notificationData.text,
-//         },
-//         data: {
-//           notification_type: "chat",
-//           navigationId: "messages",
-//           data: JSON.stringify(notificationPayload),
-//         },
-//       });
-//       console.log("notification send successfully...!!!!", res);
-//     }
-//   } catch (error) {
-//     console.log("notification failed", error);
-//   }
-// };
+      let res = await firebase.messaging().send({
+        token: findUser?.fcmToken,
+        notification: {
+          title: "New Message",
+          body: notificationData.text,
+        },
+        data: {
+          notification_type: "chat",
+          navigationId: "messages",
+          data: JSON.stringify(notificationPayload),
+        },
+      });
+      console.log("notification send successfully...!!!!", res);
+    }
+  } catch (error) {
+    console.log("notification failed", error);
+  }
+};
 
 // const sendNotification = async (notificationData) => {
 //   console.log("notification data received", notificationData);
@@ -158,41 +158,41 @@ module.exports = (io) => {
 //   }
 // };
 
-const sendNotification = async (notificationData) => {
-  console.log("notification data received", notificationData);
+// const sendNotification = async (notificationData) => {
+//   console.log("notification data received", notificationData);
 
-  try {
-    // Get the ID of the sender
-    const senderId = notificationData.user._id;
+//   try {
+//     // Get the ID of the sender
+//     const senderId = notificationData.user._id;
 
-    // Iterate through the group members to send notifications
-    notificationData.roomData.members.forEach(async (member) => {
-      // Skip sending notification to the sender
-      if (member._id !== senderId) {
-        if (!!member?.fcmToken) {
-          let notificationPayload = {
-            roomId: notificationData.chatId,
-            roomName: member.username, // Use member's username for roomName
-          };
+//     // Iterate through the group members to send notifications
+//     notificationData.roomData.members.forEach(async (member) => {
+//       // Skip sending notification to the sender
+//       if (member._id !== senderId) {
+//         if (!!member?.fcmToken) {
+//           let notificationPayload = {
+//             roomId: notificationData.chatId,
+//             roomName: member.username, // Use member's username for roomName
+//           };
 
-          let res = await firebase.messaging().send({
-            token: member?.fcmToken,
-            notification: {
-              title: "New Message",
-              body: notificationData.text,
-            },
-            data: {
-              notification_type: "chat",
-              navigationId: "messages",
-              data: JSON.stringify(notificationPayload),
-            },
-          });
-          console.log("notification sent successfully to", member.username, res);
-        }
-      }
-    });
-  } catch (error) {
-    console.log("notification failed", error);
-  }
-};
+//           let res = await firebase.messaging().send({
+//             token: member?.fcmToken,
+//             notification: {
+//               title: "New Message",
+//               body: notificationData.text,
+//             },
+//             data: {
+//               notification_type: "chat",
+//               navigationId: "messages",
+//               data: JSON.stringify(notificationPayload),
+//             },
+//           });
+//           console.log("notification sent successfully to", member.username, res);
+//         }
+//       }
+//     });
+//   } catch (error) {
+//     console.log("notification failed", error);
+//   }
+// };
 
