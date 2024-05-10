@@ -86,7 +86,11 @@ const sendNotification = async (notificationData) => {
     console.log("Members:", members);
 
     // Construct an array of member IDs excluding the sender's ID
-    const receiverIds = members.map((member) => member.userId !== notificationData.user._id ? member.userId : null).filter(Boolean);
+    const receiverIds = members
+      .map((member) =>
+        member.userId !== notificationData.user._id ? member.userId : null
+      )
+      .filter(Boolean);
     console.log("Receiver IDs:", receiverIds);
 
     if (receiverIds.length > 0) {
@@ -124,7 +128,6 @@ const sendNotification = async (notificationData) => {
     console.log("Notification failed", error);
   }
 };
-
 
 // const sendNotification = async (notificationData) => {
 //   console.log("notification data received", notificationData);
@@ -206,4 +209,3 @@ const sendNotification = async (notificationData) => {
 //     console.log("notification failed", error);
 //   }
 // };
-
