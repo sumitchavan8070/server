@@ -79,7 +79,7 @@ module.exports = (io) => {
 };
 
 const sendNotification = async (notificationData) => {
-  console.log("notification data received", notificationData);
+  console.log("notification data received", JSON.strigify(notificationData);
 
   try {
     // let findUser = await UserModel.findById(notificationData?.userId);
@@ -91,7 +91,7 @@ const sendNotification = async (notificationData) => {
         roomId: notificationData?.chatId,
         roomName: findUser.username,
         // receiverIds: notificationData?.userId,
-        // receiverIds: notificationData?.roomData.members,
+        receiverIds: notificationData?.roomData.members._id,
 
         // type: notificationData.roomData.type,
       };
