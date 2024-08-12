@@ -76,6 +76,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "https://wallpapercave.com/wp/wp4172190.jpg",
     },
+    subscriptionStatus: {
+      type: String,
+      enum: ["active", "inactive", "not available"],
+      default: "not available",
+    },
+    subscriptionPeriod: {
+      type: String,
+      enum: ["free", "3 months", "6 months", "1 year"],
+      default: "free",
+    },
   },
   { timestamps: true }
 );

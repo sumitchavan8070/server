@@ -1,4 +1,6 @@
 const express = require("express");
+const multer = require("multer");
+
 const {
   getPoll,
   isPostApproved,
@@ -33,8 +35,19 @@ const {
   getTopicsBySubjectId,
   updateTopic,
   deleteTopic,
+  getCategoriesWithSubcategories,
+  getCategoriesWithSubcategoriesAndYears,
+  createExamEntry,
+  removeYearWithPaper,
+  removeSubcategoryWithYearsAndPapers,
+  getCategoriesWithSubcategoriesAndYearsAndQuestionPaper,
+  getAllUsers,
 } = require("../controllers/adminController");
 const questionPaperController = require("../controllers/newQuestionPaperController");
+const {
+  getSubCategoryOfCategory,
+} = require("../controllers/examSubCatController");
+const { processPdf } = require("../controllers/pdfController");
 
 const router = express.Router();
 
@@ -54,6 +67,8 @@ router.delete("/polls/:id", deletePoll);
 
 //Question Paper Controller
 
+router.post("/create-exam-entry", createExamEntry);
+
 //Category
 router.post("/create-cat", createExamCategory);
 router.get("/getall-cat", getExamCategories);
@@ -68,6 +83,13 @@ router.delete(
   "/remove-subcategory/:categoryId/:subcategoryId",
   removeSubcategory
 );
+
+router.delete("/delete-year-with-paper/:yearId", removeYearWithPaper);
+router.delete(
+  "/delete-subcategory-with-paper",
+  removeSubcategoryWithYearsAndPapers
+);
+
 // Route to update an existing subcategory
 router.put("/update-subcategory/:categoryId/:subcategoryId", updateSubcategory);
 // Route to add a new subcategory
@@ -95,5 +117,22 @@ router.put("/topics/:id", updateTopic);
 router.delete("/delete-topic/:id", deleteTopic);
 
 router.post("/create-question", questionPaperController.createQuestionPaper);
+
+router.get("/categories-with-subcategories", getCategoriesWithSubcategories);
+router.get(
+  "/categories-with-subcategories-and-years",
+  getCategoriesWithSubcategoriesAndYears
+);
+
+router.get(
+  "/categories-with-subcategories-and-years-and-paper",
+  getCategoriesWithSubcategoriesAndYearsAndQuestionPaper
+);
+
+router.get("/get-all-students", getAllUsers);
+
+const upload = multer({ dest: "uploads/" });
+
+router.post("/upload-pdf", upload.single("pdf"), processPdf);
 
 module.exports = router;

@@ -62,6 +62,7 @@ const getPaperByCategory = async (req, res) => {
 
     // Fetch subcategories and years
     const subcatAndYears = await ExamYear.find({ catId: categoryId });
+    // console.log("Im here" + subcatAndYears);
 
     // console.log("1" + subcatAndYears);
 
@@ -83,6 +84,7 @@ const getPaperByCategory = async (req, res) => {
 
       // Push the questions to the questionPapers array
       questionPapers.push({
+        catID: categoryId,
         subCatId: subCatId,
         yearId: yearId,
         QPYear: subcatAndYear.QPYear,

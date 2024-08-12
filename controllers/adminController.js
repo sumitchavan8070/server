@@ -3,6 +3,8 @@ const SubExamCategory = require("../models/newSubExamType");
 const ExamYear = require("../models/newExamYear");
 const Subject = require("../models/newSubject");
 const Topic = require("../models/newTopicModel");
+const QuestionPaper = require("../models/newQuestionPaper");
+const User = require("../models/userModel");
 
 // Create a new exam category
 const createExamCategory = async (req, res) => {
@@ -72,6 +74,292 @@ const getAllSubCategories = async (req, res) => {
     res.status(500).json({ error: "Error fetching subcategories" });
   }
 };
+
+const getCategoriesWithSubcategories = async (req, res) => {
+  try {
+    const categories = await ExamCategory.aggregate([
+      {
+        $lookup: {
+          from: "subexamtypes",
+          localField: "_id",
+          foreignField: "catId",
+          as: "subcategories",
+        },
+      },
+    ]);
+
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getCategoriesWithSubcategoriesAndYears = async (req, res) => {
+  try {
+    const categories = await ExamCategory.aggregate([
+      {
+        $lookup: {
+          from: "subexamtypes",
+          localField: "_id",
+          foreignField: "catId",
+          as: "subcategories",
+        },
+      },
+      {
+        $unwind: {
+          path: "$subcategories",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "examyears",
+          localField: "subcategories._id",
+          foreignField: "subCatId",
+          as: "subcategories.years",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          catName: { $first: "$catName" },
+          catShortName: { $first: "$catShortName" },
+          description: { $first: "$description" },
+          image: { $first: "$image" },
+          subcategories: { $push: "$subcategories" },
+        },
+      },
+    ]);
+
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const getCategoriesWithSubcategoriesAndYearsAndQuestionPaper = async (
+  req,
+  res
+) => {
+  try {
+    const categories = await ExamCategory.aggregate([
+      {
+        $lookup: {
+          from: "subexamtypes",
+          localField: "_id",
+          foreignField: "catId",
+          as: "subcategories",
+        },
+      },
+      {
+        $unwind: {
+          path: "$subcategories",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "examyears",
+          localField: "subcategories._id",
+          foreignField: "subCatId",
+          as: "subcategories.years",
+        },
+      },
+      {
+        $unwind: {
+          path: "$subcategories.years",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "questionpapers",
+          localField: "subcategories.years._id",
+          foreignField: "QPYearID",
+          as: "subcategories.years.questions",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          catName: { $first: "$catName" },
+          catShortName: { $first: "$catShortName" },
+          description: { $first: "$description" },
+          image: { $first: "$image" },
+          subcategories: {
+            $push: {
+              _id: "$subcategories._id",
+              subCatName: "$subcategories.subCatName",
+              years: "$subcategories.years",
+            },
+          },
+        },
+      },
+    ]);
+
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const createExamEntry = async (req, res) => {
+  const { categoryId, subCatName, year } = req.body;
+
+  try {
+    // Validate categoryId
+    const category = await ExamCategory.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    // Create SubExamType entry
+    const newSubExamType = new SubExamCategory({
+      subCatName,
+      catId: categoryId,
+    });
+
+    const savedSubExamType = await newSubExamType.save();
+
+    // Create ExamYear entry
+    const newExamYear = new ExamYear({
+      QPYear: year,
+      catId: categoryId,
+      subCatId: savedSubExamType._id,
+    });
+
+    const savedExamYear = await newExamYear.save();
+
+    // Respond with the created entries
+    res.status(201).json({
+      category: category,
+      subExamType: savedSubExamType,
+      examYear: savedExamYear,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const removeYearWithPaper = async (req, res) => {
+  try {
+    const { yearId } = req.params;
+    // Find and delete all questions related to that year
+    await QuestionPaper.deleteMany({ QPYearID: yearId });
+    // Remove the year entry from the ExamYear collection
+    await ExamYear.findByIdAndDelete(yearId);
+
+    res
+      .status(200)
+      .json({ message: "Year and related questions deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete year", error });
+  }
+};
+
+const removeSubcategoryWithYearsAndPapers = async (req, res) => {
+  try {
+    const { subCategoryId, yearId } = req.body;
+
+    if (yearId) {
+      // Delete all question papers related to the specific year
+      await QuestionPaper.deleteMany({ QPYearID: yearId });
+
+      // Remove the specific year entry
+      await ExamYear.findByIdAndDelete(yearId);
+
+      const removedSubcategory = await SubExamCategory.findByIdAndDelete(
+        subCategoryId
+      );
+
+      if (!removedSubcategory) {
+        return res.status(404).json({ error: "Subcategory not found" });
+      }
+
+      res.status(200).json({
+        message:
+          "Year, related questions, and subcategory updated successfully",
+      });
+    } else {
+      const removedSubcategory = await SubExamCategory.findByIdAndDelete(
+        subCategoryId
+      );
+
+      if (!removedSubcategory) {
+        return res.status(404).json({ error: "Subcategory not found" });
+      }
+      res.status(200).json({
+        message:
+          "Subcategory, related years, and questions deleted successfully",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Failed to delete subcategory", error });
+  }
+};
+
+// const removeSubcategoryWithYearsAndPapers = async (req, res) => {
+//   try {
+//     const { subCategoryId, yearId } = req.body;
+
+//     if (yearId) {
+//       // Delete all question papers related to the specific year
+//       await QuestionPaper.deleteMany({ QPYearID: yearId });
+
+//       // Remove the specific year entry
+//       await ExamYear.findByIdAndDelete(yearId);
+
+//       // Remove the year from the subcategory
+//       const updateResult = await SubExamCategory.updateMany(
+//         { "subcategories.years._id": yearId },
+//         { $pull: { "subcategories.$[].years": { _id: yearId } } }
+//       );
+
+//       // Check if any documents were modified
+//       if (updateResult.nModified === 0) {
+//         return res
+//           .status(404)
+//           .json({ message: "Year not found in subcategory" });
+//       }
+
+//       res
+//         .status(200)
+//         .json({ message: "Year and related questions deleted successfully" });
+//     } else {
+//       // Find all years related to the subcategory
+//       const years = await ExamYear.find({ subCatId: subCategoryId });
+
+//       // Delete all question papers related to each year of the subcategory
+//       for (const year of years) {
+//         await QuestionPaper.deleteMany({ QPYearID: year._id });
+//       }
+
+//       // Delete all years related to the subcategory
+//       await ExamYear.deleteMany({ subCatId: subCategoryId });
+
+//       // Remove the subcategory itself
+//       const updateResult = await SubExamCategory.updateMany(
+//         { "subcategories._id": subCategoryId },
+//         { $pull: { subcategories: { _id: subCategoryId } } }
+//       );
+
+//       // Check if any documents were modified
+//       if (updateResult.nModified === 0) {
+//         return res.status(404).json({ message: "Subcategory not found" });
+//       }
+
+//       res
+//         .status(200)
+//         .json({
+//           message:
+//             "Subcategory, related years, and questions deleted successfully",
+//         });
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to delete subcategory", error });
+//   }
+// };
 
 // const findSubCategoriesByCategoryId = async (req, res) => {
 //   const categoryId = req.params.categoryId;
@@ -408,6 +696,15 @@ const deleteTopic = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users" });
+  }
+};
+
 module.exports = {
   createExamCategory,
   getExamCategories,
@@ -433,4 +730,11 @@ module.exports = {
   getTopicsBySubjectId,
   updateTopic,
   deleteTopic,
+  getCategoriesWithSubcategories,
+  getCategoriesWithSubcategoriesAndYears,
+  createExamEntry,
+  removeYearWithPaper,
+  removeSubcategoryWithYearsAndPapers,
+  getCategoriesWithSubcategoriesAndYearsAndQuestionPaper,
+  getAllUsers,
 };

@@ -48,6 +48,8 @@ const createSubExamCat = async (req, res) => {
 
 const getSubCategoryOfCategory = async (req, res) => {
   try {
+    console.log("Im here");
+
     // const catId = req.query._id;
     const checkCategoryPresence = await SubExamCategory.find({});
     // console.log("Length" + checkCategoryPresence.length);
@@ -62,6 +64,8 @@ const getSubCategoryOfCategory = async (req, res) => {
       data: checkCategoryPresence,
     });
   } catch (error) {
+    console.log(error);
+
     res.status(500).send({
       success: false,
       message: error.message,
