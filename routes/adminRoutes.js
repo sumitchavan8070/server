@@ -48,6 +48,7 @@ const {
   getSubCategoryOfCategory,
 } = require("../controllers/examSubCatController");
 const { processPdf } = require("../controllers/pdfController");
+const { appUpdate } = require("../controllers/appUodateController");
 
 const router = express.Router();
 
@@ -134,5 +135,8 @@ router.get("/get-all-students", getAllUsers);
 const upload = multer({ dest: "uploads/" });
 
 router.post("/upload-pdf", upload.single("pdf"), processPdf);
+
+// for app update
+router.post("/app-update", appUpdate);
 
 module.exports = router;
