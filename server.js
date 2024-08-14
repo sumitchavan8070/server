@@ -94,3 +94,8 @@ const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`Server is Running ${PORT}`.bgGreen.white);
 });
+
+app.get("/", (req, res) => {
+  res.send("Server is running!");
+  console.log("Root path accessed. Server is running.".bgGreen.white);
+});
