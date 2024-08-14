@@ -95,7 +95,9 @@ server.listen(PORT, () => {
   console.log(`Server is Running ${PORT}`.bgGreen.white);
 });
 
-app.get("/", (req, res) => {
-  res.send("Server is running!");
-  console.log("Root path accessed. Server is running.".bgGreen.white);
-});
+// server added to vercel
+
+// app.get("/", (req, res) => {
+//   res.send("Server is running!");
+//   console.log("Root path accessed. Server is running.".bgGreen.white);
+// });
