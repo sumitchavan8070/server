@@ -49,6 +49,7 @@ const {
 } = require("../controllers/examSubCatController");
 const { processPdf } = require("../controllers/pdfController");
 const { appUpdate } = require("../controllers/appUpdateController");
+const bannerController = require("../controllers/bannerController");
 
 const router = express.Router();
 
@@ -138,5 +139,18 @@ router.post("/upload-pdf", upload.single("pdf"), processPdf);
 
 // for app update
 router.post("/app-update", appUpdate);
+
+// Create a new banner
+router.post(
+  "/banner/upload-banner",
+  upload.single("coverImage"),
+  bannerController.createBanner
+);
+
+// Get all banners
+router.get("/banner/", bannerController.getBanners);
+
+// Delete a banner by ID
+router.delete("/banner/:id", bannerController.deleteBanner);
 
 module.exports = router;
