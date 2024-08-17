@@ -48,7 +48,7 @@ const {
   getSubCategoryOfCategory,
 } = require("../controllers/examSubCatController");
 const { processPdf } = require("../controllers/pdfController");
-const { appUpdate } = require("../controllers/appUodateController");
+const { appUpdate } = require("../controllers/appUpdateController");
 
 const router = express.Router();
 
