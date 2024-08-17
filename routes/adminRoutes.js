@@ -152,5 +152,6 @@ router.get("/banner/", bannerController.getBanners);
 
 // Delete a banner by ID
 router.delete("/banner/:id", bannerController.deleteBanner);
+router.put("/banner/:id", bannerController.updateBanner);
 
 module.exports = router;

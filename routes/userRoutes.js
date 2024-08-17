@@ -36,6 +36,7 @@ const {
   deleteImageFromCloudinary,
 } = require("../controllers/cloudinaryController");
 const { getApprovedPosts } = require("../controllers/postController");
+const bannerController = require("../controllers/bannerController");
 
 const router = express.Router();
 
@@ -103,5 +104,6 @@ router.get("/approved-posts", getApprovedPosts);
 
 //Get User Profile by Id
 router.get("/:id", getUserById);
+router.get("/banner/get-all", bannerController.getBanners);
 
 module.exports = router;
