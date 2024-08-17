@@ -9,7 +9,7 @@ const examCategorySchema = new mongoose.Schema({
   pdfFiles: [
     {
       heading: { type: String, required: true },
-      url: { type: String, required: true }, // URL to the PDF file
+      source: { type: String, required: true }, // URL to the PDF file
     },
   ],
 });
