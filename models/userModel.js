@@ -85,6 +85,20 @@ const userSchema = new mongoose.Schema(
       ref: "Plan", // Reference to the Plan model
       default: null, // Default to null if no plan is assigned initially
     },
+
+    purchasePaymentId: {
+      type: String,
+      default: null,
+    },
+
+    subscriptionStartDate: {
+      type: Date,
+      default: null, // Default to null if not set
+    },
+    subscriptionExpiryDate: {
+      type: Date,
+      default: null, // Default to null if not set
+    },
   },
   { timestamps: true }
 );
