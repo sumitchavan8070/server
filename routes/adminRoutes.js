@@ -50,6 +50,7 @@ const {
 const { processPdf } = require("../controllers/pdfController");
 const { appUpdate } = require("../controllers/appUpdateController");
 const bannerController = require("../controllers/bannerController");
+const plansController = require("../controllers/plansController");
 
 const router = express.Router();
 
@@ -153,5 +154,20 @@ router.get("/banner/", bannerController.getBanners);
 // Delete a banner by ID
 router.delete("/banner/:id", bannerController.deleteBanner);
 router.put("/banner/:id", bannerController.updateBanner);
+
+// Get all pricing plans
+router.get("/plans/", plansController.getAllPlans);
+
+// Get a single pricing plan by `plan` field
+router.get("/plans/:plan", plansController.getPlanById);
+
+// Create a new pricing plan
+router.post("/plans/", plansController.createPlan);
+
+// Update an existing pricing plan
+router.put("/plans/:plan", plansController.updatePlan);
+
+// Delete a pricing plan
+router.delete("/plans/:plan", plansController.deletePlan);
 
 module.exports = router;

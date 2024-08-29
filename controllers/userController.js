@@ -1,3 +1,4 @@
+const Plan = require("../models/Plan");
 const userModel = require("../models/userModel");
 const JWT = require("jsonwebtoken");
 
@@ -303,6 +304,42 @@ const getUserById = async (req, res) => {
   }
 };
 
+const updateUserSubscription = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { newPlanId } = req.body;
+
+    // Validate newPlanId
+    if (!newPlanId) {
+      return res.status(400).json({ message: "New plan ID is required" });
+    }
+
+    // Find the new plan
+    const plan = await Plan.findById(newPlanId);
+    if (!plan) {
+      return res.status(404).json({ message: "Plan not found" });
+    }
+
+    // Find and update the user
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.subscriptionPlanID = newPlanId;
+    user.isSubscriptionActive = true; // Assuming you want to activate the subscription on update
+
+    await user.save();
+
+    res
+      .status(200)
+      .json({ message: "Subscription updated successfully", user });
+  } catch (error) {
+    console.error("Error updating subscription:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   //requireSingIn,
   registerController,
@@ -312,4 +349,5 @@ module.exports = {
   updateUserFCMToken,
   updateUserBasicInfo,
   updateProfilePicture,
+  updateUserSubscription,
 };

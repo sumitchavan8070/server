@@ -6,6 +6,7 @@ const {
   updateUserFCMToken,
   updateUserBasicInfo,
   updateProfilePicture,
+  updateUserSubscription,
 } = require("../controllers/userController");
 const {
   createExamCat,
@@ -37,6 +38,7 @@ const {
 } = require("../controllers/cloudinaryController");
 const { getApprovedPosts } = require("../controllers/postController");
 const bannerController = require("../controllers/bannerController");
+const { getAllPlans, getPlanById } = require("../controllers/plansController");
 
 const router = express.Router();
 
@@ -105,5 +107,12 @@ router.get("/approved-posts", getApprovedPosts);
 //Get User Profile by Id
 router.get("/:id", getUserById);
 router.get("/banner/get-all", bannerController.getBanners);
+
+router.get("/plans/get-all", getAllPlans);
+
+// Get a single pricing plan by `plan` field
+router.get("/plans/:id", getPlanById);
+
+router.put("/update-subscription/:userId", updateUserSubscription);
 
 module.exports = router;

@@ -76,15 +76,14 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "https://wallpapercave.com/wp/wp4172190.jpg",
     },
-    subscriptionStatus: {
-      type: String,
-      enum: ["active", "inactive", "not available"],
-      default: "not available",
+    isSubscriptionActive: {
+      type: Boolean,
+      default: false, // Default to false if subscription is not active
     },
-    subscriptionPeriod: {
-      type: String,
-      enum: ["free", "3 months", "6 months", "1 year"],
-      default: "free",
+    subscriptionPlanID: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Plan", // Reference to the Plan model
+      default: null, // Default to null if no plan is assigned initially
     },
   },
   { timestamps: true }
