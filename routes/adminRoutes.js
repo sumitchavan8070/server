@@ -156,7 +156,7 @@ router.delete("/banner/:id", bannerController.deleteBanner);
 router.put("/banner/:id", bannerController.updateBanner);
 
 // Get all pricing plans
-router.get("/plans/", plansController.getAllPlans);
+router.get("/plans/get-all", plansController.getAllPlans);
 
 // Get a single pricing plan by `plan` field
 router.get("/plans/:plan", plansController.getPlanById);

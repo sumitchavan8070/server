@@ -147,7 +147,7 @@ const updateProfilePicture = async (req, res) => {
   const userId = req.params.userId; // Assuming the user ID is passed as a URL parameter
   const { profilePic } = req.body; // Assuming the profile picture URL or data is sent in the request body
 
-  console.log("=======profilePic====" + profilePic);
+  // console.log("=======profilePic====" + profilePic);
 
   try {
     // Find the user by ID
