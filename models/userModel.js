@@ -71,4 +71,21 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+userSchema.methods.enableFreePlan = function (freePlanId) {
+  this.isSubscriptionActive = true;
+  this.subscriptionPlanID = freePlanId;
+  this.subscriptionStartDate = new Date();
+  // Assuming the free plan duration is 30 days
+  this.subscriptionExpiryDate = new Date(
+    this.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
+  );
+};
+
+userSchema.methods.disableSubscription = function () {
+  this.isSubscriptionActive = false;
+  this.subscriptionPlanID = null;
+  this.subscriptionStartDate = null;
+  this.subscriptionExpiryDate = null;
+};
+
 module.exports = mongoose.model("User", userSchema);

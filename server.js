@@ -53,6 +53,8 @@ chatSocket(io);
 //custome route
 app.use("/api/v1/auth", require("./routes/userRoutes"));
 app.use("/api/v1/admin", require("./routes/adminRoutes"));
+app.use("/api/v1/admin", require("./routes/studentsTableBackedRoute"));
+
 app.use("/api/v1/auth/posts", require("./routes/postRoutes"));
 
 app.use("/api/v1/auth/exam-categories", require("./routes/examCategoryRoutes")); //DONE

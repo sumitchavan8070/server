@@ -1,6 +1,7 @@
 const Plan = require("../models/Plan");
 const userModel = require("../models/userModel");
 const JWT = require("jsonwebtoken");
+const GlobalPlan = require("../models/GlobalPlan");
 
 // //middleware
 // const requireSingIn = jwt({
@@ -197,6 +198,56 @@ const updateUserFCMToken = async (req, res) => {
 };
 
 //login
+// const loginController = async (req, res) => {
+//   try {
+//     const { email, password, fcmToken } = req.body;
+//     //validation
+//     if (!email || !password) {
+//       return res.status(500).send({
+//         success: false,
+//         message: "Please Provide Email Or Password",
+//       });
+//     }
+//     // find user
+//     const user = await userModel.findOne({ email });
+//     if (!user) {
+//       return res.status(500).send({
+//         success: false,
+//         message: "User Not Found",
+//       });
+//     }
+//     //match password
+//     // const match = await comparePassword(password, user.password);
+//     // if (!match) {
+//     //   return res.status(500).send({
+//     //     success: false,
+//     //     message: "Invalid usrname or password",
+//     //   });
+//     // }
+//     //TOKEN JWT
+//     const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
+//       expiresIn: "7d",
+//     });
+
+//     // undeinfed password
+//     user.password = undefined;
+//     res.status(200).send({
+//       success: true,
+//       message: "login successfully",
+//       token,
+//       user,
+//       fcmToken,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).send({
+//       success: false,
+//       message: "error in login api",
+//       error,
+//     });
+//   }
+// };
+
 const loginController = async (req, res) => {
   try {
     const { email, password, fcmToken } = req.body;
@@ -215,20 +266,30 @@ const loginController = async (req, res) => {
         message: "User Not Found",
       });
     }
-    //match password
-    // const match = await comparePassword(password, user.password);
-    // if (!match) {
-    //   return res.status(500).send({
-    //     success: false,
-    //     message: "Invalid usrname or password",
-    //   });
-    // }
-    //TOKEN JWT
+
+    // Fetch global free plan status
+    const globalPlan = await GlobalPlan.findOne({});
+    const freePlan = await Plan.findOne({ name: "FREE" });
+
+    if (globalPlan.status === "Active" && !user.subscriptionPlanID) {
+      user.subscriptionPlanID = freePlan._id;
+      user.isSubscriptionActive = true;
+      // Set subscription start date to current date
+      user.subscriptionStartDate = new Date();
+
+      // Set subscription expiry date to 30 days from the start date
+      user.subscriptionExpiryDate = new Date(
+        user.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
+      );
+      await user.save();
+    }
+
+    // TOKEN JWT
     const token = await JWT.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
 
-    // undeinfed password
+    // undefined password
     user.password = undefined;
     res.status(200).send({
       success: true,
