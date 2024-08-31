@@ -507,41 +507,95 @@ const checkSubscriptionStatus = async (userId) => {
 //   }
 // };
 
+// const updateUserSubscription = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+//     const { newPlanId, purchasePaymentId } = req.body;
+
+//     if (!newPlanId) {
+//       return res.status(400).json({ message: "New plan ID is required" });
+//     }
+
+//     const plan = await Plan.findById(newPlanId);
+//     if (!plan) {
+//       return res.status(404).json({ message: "Plan not found" });
+//     }
+
+//     const user = await userModel.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+
+//     user.subscriptionPlanID = newPlanId;
+//     user.isSubscriptionActive = true;
+//     user.purchasePaymentId = purchasePaymentId;
+//     user.subscriptionStartDate = new Date(); // Set to current date
+
+//     // Calculate expiry date based on plan duration (in days)
+//     const planDurationInDays = plan.durationInDays || 30; // Default to 30 days if not specified
+//     const expiryDate = new Date();
+//     expiryDate.setDate(expiryDate.getDate() + planDurationInDays);
+//     user.subscriptionExpiryDate = expiryDate;
+
+//     await user.save();
+
+//     res
+//       .status(200)
+//       .json({ message: "Subscription updated successfully", user });
+//   } catch (error) {
+//     console.error("Error updating subscription:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+
 const updateUserSubscription = async (req, res) => {
   try {
     const { userId } = req.params;
     const { newPlanId, purchasePaymentId } = req.body;
 
+    // Validate newPlanId
     if (!newPlanId) {
       return res.status(400).json({ message: "New plan ID is required" });
     }
 
+    // Fetch the plan by ID
     const plan = await Plan.findById(newPlanId);
     if (!plan) {
       return res.status(404).json({ message: "Plan not found" });
     }
 
+    // Fetch the user by ID
     const user = await userModel.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Update user subscription details
     user.subscriptionPlanID = newPlanId;
     user.isSubscriptionActive = true;
     user.purchasePaymentId = purchasePaymentId;
-    user.subscriptionStartDate = new Date(); // Set to current date
+    user.subscriptionStartDate = new Date(); // Set the start date to the current date
 
-    // Calculate expiry date based on plan duration (in days)
+    // Calculate the expiry date based on the plan duration
     const planDurationInDays = plan.durationInDays || 30; // Default to 30 days if not specified
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + planDurationInDays);
     user.subscriptionExpiryDate = expiryDate;
 
+    // Save the updated user details
     await user.save();
 
-    res
-      .status(200)
-      .json({ message: "Subscription updated successfully", user });
+    // Return updated subscription details in the response
+    res.status(200).json({
+      message: "Subscription updated successfully",
+      user: {
+        subscriptionPlanID: user.subscriptionPlanID,
+        isSubscriptionActive: user.isSubscriptionActive,
+        subscriptionStartDate: user.subscriptionStartDate,
+        subscriptionExpiryDate: user.subscriptionExpiryDate,
+        purchasePaymentId: user.purchasePaymentId,
+      },
+    });
   } catch (error) {
     console.error("Error updating subscription:", error);
     res.status(500).json({ message: "Internal server error" });
