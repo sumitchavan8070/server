@@ -56,6 +56,7 @@ app.use("/api/v1/admin", require("./routes/adminRoutes"));
 app.use("/api/v1/admin", require("./routes/studentsTableBackedRoute"));
 
 app.use("/api/v1/auth/posts", require("./routes/postRoutes"));
+app.use("/api/v1/admin/posts", require("./routes/postRoutes"));
 
 app.use("/api/v1/auth/exam-categories", require("./routes/examCategoryRoutes")); //DONE
 app.use("/api/v1/auth/subcategories", require("./routes/subExamTypeRoutes")); // Done
@@ -84,6 +85,7 @@ app.use("/api/v1/auth/papers", require("./routes/allPaperRoutes"));
 app.use("/api/v1/admin/papers", require("./routes/allPaperRoutes"));
 
 app.use("/api/v1/auth/feedback", require("./routes/feedbackRoutes"));
+app.use("/api/v1/admin/feedback", require("./routes/feedbackRoutes"));
 
 //port
 const PORT = process.env.PORT || 8080;

@@ -6,6 +6,15 @@ const globalPlanSchema = new mongoose.Schema({
     enum: ["Active", "Disable"],
     default: "Disable",
   },
+
+  subscriptionStartDate: {
+    type: Date,
+    default: null,
+  },
+  subscriptionExpiryDate: {
+    type: Date,
+    default: null,
+  },
 });
 
 module.exports = mongoose.model("GlobalPlan", globalPlanSchema);

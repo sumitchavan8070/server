@@ -9,6 +9,7 @@ const {
 const {
   registerController,
   loginController,
+  getUserById,
 } = require("../controllers/userController");
 const {
   createExamCategory,
@@ -60,11 +61,14 @@ router.post("/register", registerController);
 // LOGIN || POST
 router.post("/login", loginController);
 
+router.get("/getUser/:id", getUserById);
+
 //Get All Polls
 router.get("/polls", getPoll);
 
 // Reject or Approve Poll
 router.get("/polls/:postId", isPostApproved);
+router.put("/polls/:postId", isPostApproved);
 
 router.delete("/polls/:id", deletePoll);
 

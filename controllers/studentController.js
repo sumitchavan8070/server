@@ -194,17 +194,54 @@ exports.disablePlanForMultipleStudents = async (req, res) => {
   }
 };
 
+// exports.getGlobalFreePlanStatus = async (req, res) => {
+//   try {
+//     let globalPlan = await GlobalPlan.findOne({});
+
+//     if (!globalPlan) {
+//       // Create a default entry if none exists
+//       globalPlan = new GlobalPlan({ status: "Disable" }); // Or any other default status
+//       await globalPlan.save();
+//     }
+
+//     res.status(200).json({ status: globalPlan.status });
+//   } catch (error) {
+//     console.log(error);
+//     res
+//       .status(500)
+//       .json({ message: "Error fetching global free plan status", error });
+//   }
+// };
+
+// // Update Global Free Plan Status
+// exports.updateGlobalFreePlan = async (req, res) => {
+//   try {
+//     const { status } = req.body;
+//     await GlobalPlan.findOneAndUpdate({}, { status });
+//     res.status(200).json({ message: `Global Free Plan ${status}` });
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Error updating global free plan status", error });
+//   }
+// };
+
+// Get Global Free Plan Status
 exports.getGlobalFreePlanStatus = async (req, res) => {
   try {
     let globalPlan = await GlobalPlan.findOne({});
 
     if (!globalPlan) {
       // Create a default entry if none exists
-      globalPlan = new GlobalPlan({ status: "Disable" }); // Or any other default status
+      globalPlan = new GlobalPlan({ status: "Disable" });
       await globalPlan.save();
     }
 
-    res.status(200).json({ status: globalPlan.status });
+    res.status(200).json({
+      status: globalPlan.status,
+      subscriptionStartDate: globalPlan.subscriptionStartDate,
+      subscriptionExpiryDate: globalPlan.subscriptionExpiryDate,
+    });
   } catch (error) {
     console.log(error);
     res
@@ -213,15 +250,23 @@ exports.getGlobalFreePlanStatus = async (req, res) => {
   }
 };
 
-// Update Global Free Plan Status
 exports.updateGlobalFreePlan = async (req, res) => {
   try {
-    const { status } = req.body;
-    await GlobalPlan.findOneAndUpdate({}, { status });
-    res.status(200).json({ message: `Global Free Plan ${status}` });
+    const { status, subscriptionStartDate, subscriptionExpiryDate } = req.body;
+
+    const updatedPlan = await GlobalPlan.findOneAndUpdate(
+      {},
+      {
+        status,
+        subscriptionStartDate,
+        subscriptionExpiryDate,
+      },
+      { new: true, upsert: true }
+    );
+
+    res.status(200).json(updatedPlan);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error updating global free plan status", error });
+    console.error("Error updating global free plan status", error);
+    res.status(500).json({ message: "Error updating global free plan status" });
   }
 };

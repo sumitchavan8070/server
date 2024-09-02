@@ -40,9 +40,11 @@ const userSchema = new mongoose.Schema(
     mobileNumber: {
       type: String,
     },
+
+    //Profile Pic Uploaded on Clodinary Default profile folder
     profilePic: {
       type: String,
-      default: "https://wallpapercave.com/wp/wp4172190.jpg",
+      default: "DefaultProfile/bg3savsjjwbtn7dhkrub",
     },
     isSubscriptionActive: {
       type: Boolean,

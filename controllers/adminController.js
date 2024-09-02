@@ -6,37 +6,50 @@ const Topic = require("../models/newTopicModel");
 const QuestionPaper = require("../models/newQuestionPaper");
 const User = require("../models/userModel");
 
-// Create a new exam category
 // const createExamCategory = async (req, res) => {
 //   try {
-//     const { catName, catShortName, description, image } = req.body;
+//     const { catName, description, image, pdfFiles } = req.body;
 //     const newCategory = new ExamCategory({
 //       catName,
-//       catShortName,
 //       description,
 //       image,
+//       pdfFiles, // Add this line to include pdfFiles
 //     });
 //     const savedCategory = await newCategory.save();
 //     res.status(201).json(savedCategory);
 //   } catch (error) {
+//     console.log(error);
+
 //     res.status(400).json({ error: "Error creating exam category" });
 //   }
 // };
 
 const createExamCategory = async (req, res) => {
   try {
-    const { catName, description, image, pdfFiles } = req.body;
+    const { catName, catShortName, description, image, pdfFiles } = req.body;
+
+    // Find the highest categoryNumber and increment it
+    const lastCategory = await ExamCategory.findOne({})
+      .sort({ categoryNumber: -1 })
+      .exec();
+
+    const newCategoryNumber = lastCategory
+      ? lastCategory.categoryNumber + 1
+      : 1;
+
     const newCategory = new ExamCategory({
       catName,
+      catShortName,
       description,
       image,
-      pdfFiles, // Add this line to include pdfFiles
+      pdfFiles,
+      categoryNumber: newCategoryNumber,
     });
+
     const savedCategory = await newCategory.save();
     res.status(201).json(savedCategory);
   } catch (error) {
     console.log(error);
-
     res.status(400).json({ error: "Error creating exam category" });
   }
 };
@@ -61,14 +74,59 @@ const deleteExamCategory = async (req, res) => {
   }
 };
 
+// const updateExamCategory = async (req, res) => {
+//   try {
+//     const { categoryId } = req.params;
+//     const { catName, catShortName, description, image, pdfFiles } = req.body;
+
+//     const updatedCategory = await ExamCategory.findByIdAndUpdate(
+//       categoryId,
+//       { catName, catShortName, description, image, pdfFiles },
+//       { new: true }
+//     );
+
+//     if (!updatedCategory) {
+//       return res.status(404).json({ error: "Category not found" });
+//     }
+
+//     res.status(200).json(updatedCategory);
+//   } catch (error) {
+//     console.error("Error updating category:", error);
+//     res.status(500).json({ error: "Error updating category" });
+//   }
+// };
+
 const updateExamCategory = async (req, res) => {
   try {
     const { categoryId } = req.params;
-    const { catName, catShortName, description, image, pdfFiles } = req.body;
+    const {
+      catName,
+      catShortName,
+      description,
+      image,
+      pdfFiles,
+      categoryNumber,
+    } = req.body;
+
+    // Validate categoryNumber to ensure it's a non-negative number
+    if (categoryNumber !== undefined) {
+      if (typeof categoryNumber !== "number" || categoryNumber < 0) {
+        return res
+          .status(400)
+          .json({ error: "Category number must be a non-negative number" });
+      }
+
+      const existingCategory = await ExamCategory.findOne({ categoryNumber });
+      if (existingCategory && existingCategory._id.toString() !== categoryId) {
+        return res.status(400).json({
+          error: "Category number already in use by another category",
+        });
+      }
+    }
 
     const updatedCategory = await ExamCategory.findByIdAndUpdate(
       categoryId,
-      { catName, catShortName, description, image, pdfFiles },
+      { catName, catShortName, description, image, pdfFiles, categoryNumber },
       { new: true }
     );
 
@@ -82,24 +140,6 @@ const updateExamCategory = async (req, res) => {
     res.status(500).json({ error: "Error updating category" });
   }
 };
-
-// Update an existing exam category
-// const updateExamCategory = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { catName, description, image, pdfFiles } = req.body; // Include pdfFiles here
-//     const updatedCategory = await ExamCategory.findByIdAndUpdate(
-//       id,
-//       { catName, description, image, pdfFiles }, // Add pdfFiles to update
-//       { new: true }
-//     );
-//     console.log(updatedCategory);
-
-//     res.status(200).json(updatedCategory);
-//   } catch (error) {
-//     res.status(400).json({ error: "Error updating exam category" });
-//   }
-// };
 
 // Sub Cat
 const getAllSubCategories = async (req, res) => {

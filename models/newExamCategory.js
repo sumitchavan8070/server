@@ -8,10 +8,15 @@ const examCategorySchema = new mongoose.Schema({
   image: { type: String },
   pdfFiles: [
     {
-      heading: { type: String, required: true },
-      source: { type: String, required: true }, // URL to the PDF file
+      heading: { type: String },
+      source: { type: String }, // URL to the PDF file
     },
   ],
+  categoryNumber: {
+    type: Number,
+    required: true,
+    unique: true, // Ensure the index is unique
+  },
 });
 
 module.exports = mongoose.model("ExamCategory", examCategorySchema);

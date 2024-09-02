@@ -18,4 +18,10 @@ router.put("/:id", feedbackController.updateFeedbackById);
 // Delete a feedback entry by ID
 router.delete("/:id", feedbackController.deleteFeedbackById);
 
+router.patch("/:id/reply", feedbackController.replyToFeedback);
+
+router.patch("/:id/not-interested", feedbackController.markNotInterested);
+
+router.put("/:feedbackId/interest", feedbackController.updateFeedbackInterest);
+
 module.exports = router;

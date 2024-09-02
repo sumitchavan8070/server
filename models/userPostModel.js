@@ -20,6 +20,8 @@ const userPostSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    rejected: { type: Boolean, default: false }, // New field to track rejection
+
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

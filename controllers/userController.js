@@ -268,19 +268,38 @@ const loginController = async (req, res) => {
     }
 
     // Fetch global free plan status
+    // const globalPlan = await GlobalPlan.findOne({});
+    // const freePlan = await Plan.findOne({ name: "FREE" });
+
+    // if (globalPlan.status === "Active" && !user.subscriptionPlanID) {
+    //   user.subscriptionPlanID = freePlan._id;
+    //   user.isSubscriptionActive = true;
+    //   // Set subscription start date to current date
+    //   user.subscriptionStartDate = new Date();
+
+    //   // Set subscription expiry date to 30 days from the start date
+    //   user.subscriptionExpiryDate = new Date(
+    //     user.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
+    //   );
+
+    // Fetch global free plan status
     const globalPlan = await GlobalPlan.findOne({});
     const freePlan = await Plan.findOne({ name: "FREE" });
 
+    // Set subscription dates based on globalPlan or default to new dates
     if (globalPlan.status === "Active" && !user.subscriptionPlanID) {
       user.subscriptionPlanID = freePlan._id;
       user.isSubscriptionActive = true;
-      // Set subscription start date to current date
-      user.subscriptionStartDate = new Date();
 
-      // Set subscription expiry date to 30 days from the start date
-      user.subscriptionExpiryDate = new Date(
-        user.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
-      );
+      // Use globalPlan dates if available, otherwise set new dates
+      user.subscriptionStartDate =
+        globalPlan.subscriptionStartDate || new Date();
+      user.subscriptionExpiryDate =
+        globalPlan.subscriptionExpiryDate ||
+        new Date(
+          user.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
+        );
+
       await user.save();
     }
 
