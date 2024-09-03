@@ -39,6 +39,9 @@ const {
 const { getApprovedPosts } = require("../controllers/postController");
 const bannerController = require("../controllers/bannerController");
 const { getAllPlans, getPlanById } = require("../controllers/plansController");
+const {
+  getCategoriesWithSubcategoriesAndYears,
+} = require("../controllers/adminController");
 
 const router = express.Router();
 

@@ -188,7 +188,6 @@ exports.replyToFeedback = async (req, res) => {
   try {
     const feedback = await Feedback.findById(id);
     if (!feedback) {
-      s;
       return res.status(404).json({ message: "Feedback not found" });
     }
 

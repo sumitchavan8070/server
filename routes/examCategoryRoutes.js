@@ -5,6 +5,7 @@ const {
   getExamCategories,
   updateExamCategory,
   deleteExamCategory,
+  getAllCatWithYear,
 } = require("../controllers/newexamCategoryController");
 
 router.post("/create", createExamCategory);

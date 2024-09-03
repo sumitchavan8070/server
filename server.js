@@ -87,6 +87,8 @@ app.use("/api/v1/admin/papers", require("./routes/allPaperRoutes"));
 app.use("/api/v1/auth/feedback", require("./routes/feedbackRoutes"));
 app.use("/api/v1/admin/feedback", require("./routes/feedbackRoutes"));
 
+app.use("/api/v1/auth/abc", require("./routes/examDetailWithYearRoute"));
+
 //port
 const PORT = process.env.PORT || 8080;
 
