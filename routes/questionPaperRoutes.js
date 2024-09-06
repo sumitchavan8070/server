@@ -25,7 +25,10 @@ router.post(
   questionPaperController.getQuestionPapersByFilter
 );
 
-router.put("/update-question/:id", questionPaperController.updateQuestion);
+router.put(
+  "/update-question/:questionId",
+  questionPaperController.updateQuestion
+);
 
 // Route to delete a specific question by ID
 router.delete("/delete-question/:id", questionPaperController.deleteQuestion);

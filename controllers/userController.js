@@ -261,26 +261,8 @@ const loginController = async (req, res) => {
     // find user
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(500).send({
-        success: false,
-        message: "User Not Found",
-      });
+      return res.status(404).json({ message: "User not found" });
     }
-
-    // Fetch global free plan status
-    // const globalPlan = await GlobalPlan.findOne({});
-    // const freePlan = await Plan.findOne({ name: "FREE" });
-
-    // if (globalPlan.status === "Active" && !user.subscriptionPlanID) {
-    //   user.subscriptionPlanID = freePlan._id;
-    //   user.isSubscriptionActive = true;
-    //   // Set subscription start date to current date
-    //   user.subscriptionStartDate = new Date();
-
-    //   // Set subscription expiry date to 30 days from the start date
-    //   user.subscriptionExpiryDate = new Date(
-    //     user.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
-    //   );
 
     // Fetch global free plan status
     const globalPlan = await GlobalPlan.findOne({});
@@ -318,7 +300,7 @@ const loginController = async (req, res) => {
       fcmToken,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return res.status(500).send({
       success: false,
       message: "error in login api",

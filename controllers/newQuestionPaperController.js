@@ -275,7 +275,7 @@ const updateQuestion = async (req, res) => {
     const updatedQuestionData = req.body;
 
     // Use the correct query to find the document and the specific question to update
-    const updatedQuestion = await QuestionPaper.findOne(questionId);
+    const updatedQuestion = await QuestionPaper.findOne({ _id: questionId });
 
     if (!updatedQuestion) {
       return res.status(404).json({ message: "Question not found" });
@@ -295,6 +295,8 @@ const updateQuestion = async (req, res) => {
       .status(200)
       .json({ message: "Question updated successfully", updatedQuestion });
   } catch (error) {
+    console.log(error);
+
     res.status(500).json({ message: error.message });
   }
 };

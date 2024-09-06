@@ -482,11 +482,11 @@ const writeQuestionsToExcel = (questions, outputPath) => {
     const splitOptionsArr = splitOptions(question.options);
     return {
       QuestionNo: question.questionNo,
-      QuestionText: question.questionText,
-      Option1: splitOptionsArr[0] || "",
-      Option2: splitOptionsArr[1] || "",
-      Option3: splitOptionsArr[2] || "",
-      Option4: splitOptionsArr[3] || "",
+      question: question.questionText,
+      option1: splitOptionsArr[0] || "",
+      option2: splitOptionsArr[1] || "",
+      option3: splitOptionsArr[2] || "",
+      option4: splitOptionsArr[3] || "",
     };
   });
   const workbook = XLSX.utils.book_new();
