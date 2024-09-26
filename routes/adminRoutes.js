@@ -49,7 +49,13 @@ const {
   getSubCategoryOfCategory,
 } = require("../controllers/examSubCatController");
 const { processPdf } = require("../controllers/pdfController");
-const { appUpdate } = require("../controllers/appUpdateController");
+const {
+  appUpdate,
+  getAppUpdates,
+  createAppUpdate,
+  updateAppUpdate,
+  deleteAppUpdate,
+} = require("../controllers/appUpdateController");
 const bannerController = require("../controllers/bannerController");
 const plansController = require("../controllers/plansController");
 
@@ -144,6 +150,12 @@ router.post("/upload-pdf", upload.single("pdf"), processPdf);
 
 // for app update
 router.post("/app-update", appUpdate);
+
+//below routes added for app update
+router.get("/app-updates/get", getAppUpdates);
+router.post("/app-update/create", createAppUpdate);
+router.put("/app-update/:id", updateAppUpdate);
+router.delete("/app-update/:id", deleteAppUpdate);
 
 // Create a new banner
 router.post(
