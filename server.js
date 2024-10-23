@@ -11,6 +11,8 @@ const dotenv = require("dotenv");
 const colors = require("colors");
 const morgan = require("morgan");
 const connectDB = require("./config/db");
+const cron = require("node-cron");
+const userModel = require("./models/userModel");
 
 const io = new Server(server, {
   cors: {
@@ -90,6 +92,32 @@ app.use("/api/v1/auth/feedback", require("./routes/feedbackRoutes"));
 app.use("/api/v1/admin/feedback", require("./routes/feedbackRoutes"));
 
 app.use("/api/v1/auth/abc", require("./routes/examDetailWithYearRoute"));
+
+app.use("/api/v1/auth/subscription", require("./routes/subscriptionRoutes"));
+
+// Cron Job to Check Subscriptions
+cron.schedule("28 18 * * *", async () => {
+  console.log("Running the subscription check job at 6:10 PM");
+
+  try {
+    const currentDate = new Date();
+    const usersToUpdate = await userModel.find({
+      subscriptionExpiryDate: { $lt: currentDate },
+      isSubscriptionActive: true,
+    });
+
+    usersToUpdate.forEach(async (user) => {
+      user.isSubscriptionActive = false;
+      await user.save();
+    });
+
+    console.log(
+      `${usersToUpdate.length} users had their subscriptions marked inactive.`
+    );
+  } catch (error) {
+    console.error("Error checking subscription status:", error);
+  }
+});
 
 //port
 const PORT = process.env.PORT || 8080;
