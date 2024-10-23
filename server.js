@@ -96,11 +96,13 @@ app.use("/api/v1/auth/abc", require("./routes/examDetailWithYearRoute"));
 app.use("/api/v1/auth/subscription", require("./routes/subscriptionRoutes"));
 
 // Cron Job to Check Subscriptions
-cron.schedule("59 18 * * *", async () => {
-  console.log("Running the subscription check job at 6:10 PM");
+cron.schedule("15 20 * * *", async () => {
+  console.log("Running the subscription check");
 
   try {
     const currentDate = new Date();
+    console.log(currentDate);
+
     const usersToUpdate = await userModel.find({
       subscriptionExpiryDate: { $lt: currentDate },
       isSubscriptionActive: true,
@@ -137,3 +139,5 @@ server.listen(PORT, () => {
 //   res.send("Server is running!");
 //   console.log("Root path accessed. Server is running.".bgGreen.white);
 // });
+
+setInterval(() => {}, 1000 * 60 * 60); // 1-hour interval to keep the worker running
