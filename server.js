@@ -96,7 +96,7 @@ app.use("/api/v1/auth/abc", require("./routes/examDetailWithYearRoute"));
 app.use("/api/v1/auth/subscription", require("./routes/subscriptionRoutes"));
 
 // Cron Job to Check Subscriptions
-cron.schedule("50 18 * * *", async () => {
+cron.schedule("59 18 * * *", async () => {
   console.log("Running the subscription check job at 6:10 PM");
 
   try {
