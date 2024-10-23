@@ -96,30 +96,30 @@ app.use("/api/v1/auth/abc", require("./routes/examDetailWithYearRoute"));
 app.use("/api/v1/auth/subscription", require("./routes/subscriptionRoutes"));
 
 // Cron Job to Check Subscriptions
-cron.schedule("15 20 * * *", async () => {
-  console.log("Running the subscription check");
+// cron.schedule("17 20 * * *", async () => {
+//   console.log("Running the subscription check");
 
-  try {
-    const currentDate = new Date();
-    console.log(currentDate);
+//   try {
+//     const currentDate = new Date();
+//     console.log(currentDate);
 
-    const usersToUpdate = await userModel.find({
-      subscriptionExpiryDate: { $lt: currentDate },
-      isSubscriptionActive: true,
-    });
+//     const usersToUpdate = await userModel.find({
+//       subscriptionExpiryDate: { $lt: currentDate },
+//       isSubscriptionActive: true,
+//     });
 
-    usersToUpdate.forEach(async (user) => {
-      user.isSubscriptionActive = false;
-      await user.save();
-    });
+//     usersToUpdate.forEach(async (user) => {
+//       user.isSubscriptionActive = false;
+//       await user.save();
+//     });
 
-    console.log(
-      `${usersToUpdate.length} users had their subscriptions marked inactive.`
-    );
-  } catch (error) {
-    console.error("Error checking subscription status:", error);
-  }
-});
+//     console.log(
+//       `${usersToUpdate.length} users had their subscriptions marked inactive.`
+//     );
+//   } catch (error) {
+//     console.error("Error checking subscription status:", error);
+//   }
+// });
 
 //port
 const PORT = process.env.PORT || 8080;
@@ -140,4 +140,4 @@ server.listen(PORT, () => {
 //   console.log("Root path accessed. Server is running.".bgGreen.white);
 // });
 
-setInterval(() => {}, 1000 * 60 * 60); // 1-hour interval to keep the worker running
+// setInterval(() => {}, 1000 * 60 * 60); // 1-hour interval to keep the worker running
