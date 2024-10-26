@@ -271,3 +271,35 @@ exports.updateGlobalFreePlan = async (req, res) => {
     res.status(500).json({ message: "Error updating global free plan status" });
   }
 };
+
+// Route to update expiry date
+
+exports.updateExpiryDate = async (req, res) => {
+  const { studentIds, newExpiryDate } = req.body;
+
+  try {
+    // Convert the new expiry date to a Date object
+    const expiryDate = new Date(newExpiryDate);
+
+    // Update the students in the database
+    const result = await Student.updateMany(
+      { _id: { $in: studentIds } },
+      { $set: { subscriptionExpiryDate: expiryDate } }
+    );
+
+    if (result.nModified > 0) {
+      return res
+        .status(200)
+        .json({ message: "Expiry date updated successfully." });
+    } else {
+      return res
+        .status(404)
+        .json({ message: "No students found with the provided IDs." });
+    }
+  } catch (error) {
+    console.error("Error updating expiry date:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while updating the expiry date." });
+  }
+};

@@ -9,6 +9,7 @@ const {
   disablePlanForMultipleStudents,
   getGlobalFreePlanStatus,
   updateGlobalFreePlan,
+  updateExpiryDate,
 } = require("../controllers/studentController");
 
 // Routes
@@ -19,5 +20,7 @@ router.put("/disable-plan", disablePlanForMultipleStudents); // Bulk operation
 
 router.get("/global-free-plan-status", getGlobalFreePlanStatus);
 router.put("/update-global-free-plan", updateGlobalFreePlan);
+
+router.put("/update-expiry-date", updateExpiryDate);
 
 module.exports = router;
