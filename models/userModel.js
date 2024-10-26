@@ -86,8 +86,8 @@ userSchema.methods.enableFreePlan = function (freePlanId) {
 userSchema.methods.disableSubscription = function () {
   this.isSubscriptionActive = false;
   this.subscriptionPlanID = null;
-  this.subscriptionStartDate = null;
-  this.subscriptionExpiryDate = null;
+  // this.subscriptionStartDate = null;
+  // this.subscriptionExpiryDate = null;
 };
 
 module.exports = mongoose.model("User", userSchema);

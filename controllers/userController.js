@@ -270,18 +270,15 @@ const loginController = async (req, res) => {
 
     // Set subscription dates based on globalPlan or default to new dates
     if (globalPlan.status === "Active" && !user.subscriptionPlanID) {
-      user.subscriptionPlanID = freePlan._id;
-      user.isSubscriptionActive = true;
+      const planId = freePlan._id;
+      //   user.isSubscriptionActive = true;
 
-      // Use globalPlan dates if available, otherwise set new dates
-      user.subscriptionStartDate =
-        globalPlan.subscriptionStartDate || new Date();
-      user.subscriptionExpiryDate =
-        globalPlan.subscriptionExpiryDate ||
-        new Date(
-          user.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
-        );
-
+      //   // Use globalPlan dates if available, otherwise set new dates
+      //   user.subscriptionStartDate = new Date();
+      //   user.subscriptionExpiryDate = new Date(
+      //     user.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
+      //   );
+      user.enableFreePlan(planId);
       await user.save();
     }
 
@@ -359,6 +356,9 @@ const getUserById = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     }
+
+    console.log("isiisii :", user);
+
     res.status(200).json({ success: true, user });
   } catch (error) {
     console.error("Error fetching user by ID:", error);

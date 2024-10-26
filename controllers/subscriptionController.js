@@ -46,8 +46,16 @@ exports.checkSubscription = async (req, res) => {
       user.subscriptionExpiryDate &&
       user.subscriptionExpiryDate < currentDate
     ) {
-      user.isSubscriptionActive = false; // Mark subscription as inactive
-      await user.save(); // Save the updated user document
+      // user.isSubscriptionActive = false; // Mark subscription as inactive
+      // await user.save(); // Save the updated user document
+      const student = await User.findById(userId);
+      if (!student) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+
+      student.disableSubscription();
+
+      await student.save();
     }
 
     // Respond with the user's subscription status and expiry date

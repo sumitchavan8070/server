@@ -39,6 +39,7 @@ exports.disablePlanForStudent = async (req, res) => {
     }
 
     student.disableSubscription();
+
     await student.save();
 
     res
