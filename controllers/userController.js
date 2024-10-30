@@ -144,6 +144,40 @@ const updateUserBasicInfo = async (req, res) => {
   }
 };
 
+const updateUserMobileNumber = async (req, res) => {
+  const { userId } = req.params; // Assuming you pass the userId in the URL params
+  const { mobileNumber } = req.body;
+
+  try {
+    // Find the user by userId
+    let user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.mobileNumber = mobileNumber;
+
+    // Save the updated user info
+    await user.save();
+
+    return res.status(200).send({
+      success: true,
+      message: "Profile updated successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.error("Error updating user info:", error);
+    return res.status(500).send({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+
 const updateProfilePicture = async (req, res) => {
   const userId = req.params.userId; // Assuming the user ID is passed as a URL parameter
   const { profilePic } = req.body; // Assuming the profile picture URL or data is sent in the request body
@@ -346,6 +380,25 @@ const updateUserController = async (req, res) => {
 };
 
 // Controller function to get a user by ID
+// const getUserById = async (req, res) => {
+//   const userId = req.params.id;
+
+//   try {
+//     const user = await userModel.findById(userId);
+//     if (!user) {
+//       return res
+//         .status(404)
+//         .json({ success: false, message: "User not found" });
+//     }
+
+//     res.status(200).json({ success: true, user });
+//   } catch (error) {
+//     console.error("Error fetching user by ID:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
+// Controller function to get a user by ID
 const getUserById = async (req, res) => {
   const userId = req.params.id;
 
@@ -355,6 +408,18 @@ const getUserById = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
+    }
+
+    // Check if the current date is greater than the subscription expiry date
+    const currentDate = new Date();
+    if (
+      user.subscriptionExpiryDate &&
+      currentDate > user.subscriptionExpiryDate
+    ) {
+      // Mark subscription as inactive and remove the plan ID
+      user.isSubscriptionActive = false;
+      user.subscriptionPlanID = null;
+      await user.save(); // Save the updated user
     }
 
     res.status(200).json({ success: true, user });
@@ -574,7 +639,9 @@ const updateUserSubscription = async (req, res) => {
     user.isSubscriptionActive = true;
     user.purchasePaymentId = purchasePaymentId;
     user.subscriptionStartDate = new Date(); // Set the start date to the current date
-
+    if (purchasePaymentId) {
+      user.testsTaken = 0;
+    }
     // Calculate the expiry date based on the plan duration
     const planDurationInDays = plan.durationInDays || 30; // Default to 30 days if not specified
     const expiryDate = new Date();
@@ -611,4 +678,5 @@ module.exports = {
   updateUserBasicInfo,
   updateProfilePicture,
   updateUserSubscription,
+  updateUserMobileNumber,
 };

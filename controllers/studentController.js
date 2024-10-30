@@ -275,19 +275,22 @@ exports.updateGlobalFreePlan = async (req, res) => {
 // Route to update expiry date
 
 exports.updateExpiryDate = async (req, res) => {
-  const { studentIds, newExpiryDate } = req.body;
+  const { userId, expiryDate } = req.body;
+
+  console.log("studentIds", userId);
 
   try {
     // Convert the new expiry date to a Date object
-    const expiryDate = new Date(newExpiryDate);
+    const expiryDateRecived = new Date(expiryDate);
 
     // Update the students in the database
-    const result = await Student.updateMany(
-      { _id: { $in: studentIds } },
-      { $set: { subscriptionExpiryDate: expiryDate } }
+    const result = await User.updateMany(
+      { _id: { $in: userId } },
+      { $set: { subscriptionExpiryDate: expiryDateRecived } }
     );
+    console.log("result", result);
 
-    if (result.nModified > 0) {
+    if (result.modifiedCount > 0) {
       return res
         .status(200)
         .json({ message: "Expiry date updated successfully." });

@@ -7,6 +7,7 @@ const {
   updateUserBasicInfo,
   updateProfilePicture,
   updateUserSubscription,
+  updateUserMobileNumber,
 } = require("../controllers/userController");
 const {
   createExamCat,
@@ -108,7 +109,6 @@ router.delete("/delete-image", deleteImageFromCloudinary);
 router.get("/approved-posts", getApprovedPosts);
 
 //Get User Profile by Id
-router.get("/:id", getUserById);
 router.get("/banner/get-all", bannerController.getBanners);
 
 router.get("/plans/get-all", getAllPlans);
@@ -117,5 +117,9 @@ router.get("/plans/get-all", getAllPlans);
 router.get("/plans/:id", getPlanById);
 
 router.put("/update-subscription/:userId", updateUserSubscription);
+
+router.get("/:id", getUserById);
+
+router.put("/:userId/updateMobile", updateUserMobileNumber);
 
 module.exports = router;

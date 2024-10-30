@@ -69,6 +69,37 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null, // Default to null if not set
     },
+
+    maxTestsAllowed: {
+      type: Number,
+      default: 5, // Default for non-subscribers
+    },
+    testsTaken: {
+      type: Number,
+      default: 0, // Number of tests user has taken
+    },
+
+    maxHistoryViewCountAllowed: {
+      type: Number,
+      default: 3, // Default for non-subscribers
+    },
+    historyViewCount: {
+      type: Number,
+      default: 0, // Number of tests user has taken
+    },
+
+    // New fields for storing device information
+    deviceId: {
+      type: String,
+      unique: true, // Ensures one unique device per user
+      sparse: true, // Allows null values for users who haven't registered a device yet
+    },
+    deviceModel: {
+      type: String,
+    },
+    deviceOS: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
@@ -81,6 +112,13 @@ userSchema.methods.enableFreePlan = function (freePlanId) {
   this.subscriptionExpiryDate = new Date(
     this.subscriptionStartDate.getTime() + 30 * 24 * 60 * 60 * 1000
   );
+  this.testsTaken = 0;
+  this.historyViewCount = 0;
+};
+
+userSchema.methods.updateTestTakenToZero = function () {
+  this.testsTaken = 0;
+  this.historyViewCount = 0;
 };
 
 userSchema.methods.disableSubscription = function () {
@@ -88,6 +126,8 @@ userSchema.methods.disableSubscription = function () {
   this.subscriptionPlanID = null;
   // this.subscriptionStartDate = null;
   // this.subscriptionExpiryDate = null;
+  this.testsTaken = 0;
+  this.historyViewCount = 0;
 };
 
 module.exports = mongoose.model("User", userSchema);
