@@ -2,6 +2,7 @@ const Plan = require("../models/Plan");
 const userModel = require("../models/userModel");
 const JWT = require("jsonwebtoken");
 const GlobalPlan = require("../models/GlobalPlan");
+const { comparePasswordWithoutHashing } = require("../helpers/userHelper");
 
 // //middleware
 // const requireSingIn = jwt({
@@ -296,6 +297,16 @@ const loginController = async (req, res) => {
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
+    }
+
+    // match password
+    const match = await comparePasswordWithoutHashing(password, user.password);
+
+    if (!match) {
+      return res.status(500).send({
+        success: false,
+        message: "Invalid username or password",
+      });
     }
 
     // Fetch global free plan status

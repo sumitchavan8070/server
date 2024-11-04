@@ -55,6 +55,8 @@ chatSocket(io);
 //custome route
 app.use("/api/v1/auth", require("./routes/userRoutes"));
 app.use("/api/v1/admin", require("./routes/adminRoutes"));
+app.use("/api/v1/auth/variable", require("./routes/constantsRoutes"));
+
 app.use("/api/v1/admin", require("./routes/studentsTableBackedRoute"));
 app.use("/api/v1/admin/donation", require("./routes/donationRoutes"));
 app.use("/api/v1/auth/donation", require("./routes/donationRoutes"));
