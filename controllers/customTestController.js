@@ -37,7 +37,7 @@ exports.createCustomTest = async (req, res) => {
     //   data: savedTest,
     // });
     const savedTest = await customTest.save();
-    console.log("savedTest -------" + JSON.stringify(savedTest));
+    // console.log("savedTest -------" + JSON.stringify(savedTest));
 
     res.status(201).json({
       success: true,

@@ -180,7 +180,7 @@ exports.searchUsers = async (req, res) => {
     } else {
       res.json(users);
     }
-    console.log(users);
+    // console.log(users);
   } catch (error) {
     console.error("Error searching users:", error);
     res.status(500).json({ error: "Server error" });

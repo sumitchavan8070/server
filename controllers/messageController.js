@@ -97,7 +97,7 @@ exports.deleteMessage = async (req, res) => {
 
 exports.sendMessage = async (req, res) => {
   const { chatId, text, receiverId, type, userId, buttonTitle } = req.body;
-  console.log("buttonTitle" + JSON.stringify(buttonTitle));
+  // console.log("buttonTitle" + JSON.stringify(buttonTitle));
 
   try {
     const newMessage = await Message.create({
@@ -117,7 +117,7 @@ exports.sendMessage = async (req, res) => {
       }
     );
 
-    console.log("chatUpdate" + JSON.stringify(chatUpdate));
+    // console.log("chatUpdate" + JSON.stringify(chatUpdate));
     // console.log("newMessage" + JSON.stringify(newMessage));
 
     res.send({
