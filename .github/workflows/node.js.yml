@@ -43,7 +43,7 @@ jobs:
           echo "Removing old node_modules and package-lock.json..."
           rm -rf node_modules package-lock.json
           echo "Installing new dependencies..."
-          sudo npm install --timeout=50000 --verbose
+          npm install --timeout=50000 --verbose
           echo "Successfully added new dependencies..."
 
       # Start the server if it's not running, otherwise restart it
