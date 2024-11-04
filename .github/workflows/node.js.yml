@@ -1,4 +1,4 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code, and run tests across different versions of Node.js.
+# This workflow will do a clean installation of node dependencies, cache/restore them, and restart the server using PM2.
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
@@ -18,20 +18,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    
-    # Remove old node_modules and package-lock.json
+        # Temporarily disabling cache for troubleshooting purposes
+        cache: false
+
+    # Clean install dependencies by removing old node_modules and package-lock.json
     - name: Clean install dependencies
       run: |
-        rm -rf node_modules package-lock.json
-        npm install
-        
-    # Build the project (if a build script is present)
-    - run: npm run build --if-present
-    
+        sudo rm -rf node_modules package-lock.json
+        df -h   # Check disk usage to ensure there's enough space
+        npm install --force   # Force install dependencies to handle any lingering issues
+
     # Restart the server using pm2
-    - run: pm2 start server.js
+    - name: Restart Server with PM2
+      run: pm2 start server.js
