@@ -1,11 +1,12 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, and restart the server using PM2.
+# This workflow will do a clean installation of node dependencies, cache/restore them,
+# build the source code, and run tests across different versions of Node.js.
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   build:
@@ -17,22 +18,33 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        # Temporarily disabling cache for troubleshooting purposes
-        cache: false
+      - uses: actions/checkout@v4
 
-    # Clean install dependencies by removing old node_modules and package-lock.json
-    - name: Clean install dependencies
-      run: |
-        sudo rm -rf node_modules package-lock.json
-        df -h   # Check disk usage to ensure there's enough space
-        npm install --force   # Force install dependencies to handle any lingering issues
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
 
-    # Restart the server using pm2
-    - name: Restart Server with PM2
-      run: pm2 start server.js
+      # Check and set directory permissions
+      - name: Check and Set Permissions
+        run: |
+          echo "Checking directory permissions..."
+          ls -ld /home/ubuntu/actions-meadhikari/_work/server/server
+          echo "Setting directory ownership and permissions..."
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-meadhikari/_work/server/server
+          sudo chmod -R 755 /home/ubuntu/actions-meadhikari/_work/server/server
+
+      # Remove old node_modules and package-lock.json, then install new dependencies
+      - name: Clean and Install Dependencies
+        run: |
+          echo "Removing old node_modules and package-lock.json..."
+          rm -rf node_modules package-lock.json
+          echo "Installing new dependencies..."
+          npm install
+
+      # Uncomment if you have a build script to run; otherwise, you can remove this step.
+      # - run: npm run build --if-present
+
+      - name: Restart Server
+        run: pm2 start server.js
