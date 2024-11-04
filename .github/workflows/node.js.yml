@@ -35,16 +35,24 @@ jobs:
           sudo chown -R ubuntu:ubuntu /home/ubuntu/actions-meadhikari/_work/server/server
           sudo chmod -R 755 /home/ubuntu/actions-meadhikari/_work/server/server
 
-      # Remove old node_modules and package-lock.json, then install new dependencies
+      # Navigate to the server directory and install dependencies
       - name: Clean and Install Dependencies
         run: |
+          echo "Navigating to server directory..."
+          cd /home/ubuntu/actions-meadhikari/_work/server/server
           echo "Removing old node_modules and package-lock.json..."
           rm -rf node_modules package-lock.json
           echo "Installing new dependencies..."
           npm install
+          echo "Successfully added new dependencies..."
 
-      # Uncomment if you have a build script to run; otherwise, you can remove this step.
-      # - run: npm run build --if-present
-
-      - name: Restart Server
-        run: pm2 start server.js
+      # Start the server if it's not running, otherwise restart it
+      - name: Start or Restart Server
+        run: |
+          if pm2 status | grep -q 'server'; then
+            echo "Restarting server..."
+            pm2 restart server.js
+          else
+            echo "Starting server..."
+            pm2 start server.js
+          fi
