@@ -58,3 +58,4 @@ jobs:
           cd /home/ubuntu/actions-meadhikari/_work/server/server/
           echo "Starting server..."
           pm2 start server.js
+          pm2 restart server.js
