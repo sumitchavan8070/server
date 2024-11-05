@@ -54,12 +54,7 @@ jobs:
       # Start the server if it's not running, otherwise restart it
       - name: Start or Restart Server
         run: |
-          cd /home/ubuntu/actions-meadhikari/_work/server/server
-          if pm2 status | grep -q 'server'; then
-            echo "Restarting server..."
-            pm2 restart server.js
-          else
-            cd /home/ubuntu/actions-meadhikari/_work/server/server
-            echo "Starting server..."
-            pm2 start server.js
-          fi
+
+          cd /home/ubuntu/actions-meadhikari/_work/server/server/
+          echo "Starting server..."
+          pm2 start server.js
