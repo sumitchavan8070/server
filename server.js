@@ -58,6 +58,7 @@ app.use("/api/v1/admin", require("./routes/adminRoutes"));
 app.use("/api/v1/auth/variable", require("./routes/constantsRoutes"));
 
 app.use("/api/v1/auth/policy", require("./routes/privacyPolicyRoute"));
+app.use("/api/v1/auth/deleteaccount", require("./routes/deletionRoutes"));
 
 app.use("/api/v1/admin", require("./routes/studentsTableBackedRoute"));
 app.use("/api/v1/admin/donation", require("./routes/donationRoutes"));

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Deletion Request</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- Axios CDN -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    label {
+      font-size: 16px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+
+    .success {
+      color: green;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Account Deletion Request</h1>
+
+<form id="deletionForm" onsubmit="submitForm(event)">
+  <label for="email">Email ID:</label>
+  <input type="email" id="email" name="email" required>
+
+  <label for="phone">Mobile Number:</label>
+  <input type="text" id="phone" name="phone" required pattern="\d{10}" title="Please enter a valid 10-digit mobile number">
+
+  <button type="submit">Submit Request</button>
+</form>
+
+<script>
+  // Function to handle form submission with Axios
+  function submitForm(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const phone = document.getElementById('phone').value;
+
+    // Validate fields
+    if (!email || !phone) {
+      alert('Both fields are required.');
+      return;
+    }
+
+    // Axios POST request
+    axios.post('/api/v1/auth/deleteaccount/request-deletion', {
+      email: email,
+      phone: phone
+    })
+    .then((response) => {
+      // Success alert after submission
+      alert('Your request has been received. We will review and remove your account soon.');
+      document.getElementById('deletionForm').reset();  // Reset the form
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      // Error alert if the request fails
+      alert('There was an error with your request. Please try again later.');
+    });
+  }
+</script>
+
+</body>
+</html>
