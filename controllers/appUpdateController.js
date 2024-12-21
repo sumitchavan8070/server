@@ -14,7 +14,7 @@ const appUpdate = (req, res) => {
       case "meadhikari":
         return {
           softUpdate: 0,
-          forceUpdate: 1,
+          forceUpdate: 0,
           buildNo: 50011,
           iosBuildNo: 102,
           version: "6.1.8",

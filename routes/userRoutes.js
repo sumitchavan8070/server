@@ -43,6 +43,7 @@ const { getAllPlans, getPlanById } = require("../controllers/plansController");
 const {
   getCategoriesWithSubcategoriesAndYears,
 } = require("../controllers/adminController");
+const { appUpdate } = require("../controllers/appUpdateController");
 
 const router = express.Router();
 
@@ -121,5 +122,7 @@ router.put("/update-subscription/:userId", updateUserSubscription);
 router.get("/:id", getUserById);
 
 router.put("/:userId/updateMobile", updateUserMobileNumber);
+
+router.post("/app-update", appUpdate);
 
 module.exports = router;
