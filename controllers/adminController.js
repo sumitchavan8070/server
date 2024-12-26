@@ -282,7 +282,15 @@ const getCategoriesWithSubcategoriesAndYearsAndQuestionPaper = async (
 };
 
 const createExamEntry = async (req, res) => {
-  const { categoryId, subCatName, year } = req.body;
+  const { categoryId, subCatName, year, questionPaperName } = req.body;
+
+  console.log(
+    "categoryId, subCatName, year, questionPaperName",
+    categoryId,
+    subCatName,
+    year,
+    questionPaperName
+  );
 
   try {
     // Validate categoryId
@@ -295,6 +303,7 @@ const createExamEntry = async (req, res) => {
     const newSubExamType = new SubExamCategory({
       subCatName,
       catId: categoryId,
+      questionPaperName,
     });
 
     const savedSubExamType = await newSubExamType.save();
@@ -323,6 +332,7 @@ const createExamEntry = async (req, res) => {
 const removeYearWithPaper = async (req, res) => {
   try {
     const { yearId } = req.params;
+
     // Find and delete all questions related to that year
     await QuestionPaper.deleteMany({ QPYearID: yearId });
     // Remove the year entry from the ExamYear collection

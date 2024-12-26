@@ -90,6 +90,9 @@ const getPaperByCategory = async (req, res) => {
         QPYear: subcatAndYear.QPYear,
         subCatName: subCategory ? subCategory.subCatName : "Unknown",
         questions: questions,
+        questionPaperName: subCategory
+          ? subCategory.questionPaperName
+          : "Unknown",
       });
     }
 
