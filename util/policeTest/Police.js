@@ -1,8 +1,8 @@
-// // Import required modules
 // const { fromPath } = require("pdf2pic");
 // const fs = require("fs-extra");
 // const path = require("path");
 // const Tesseract = require("tesseract.js");
+// const sharp = require("sharp"); // For image manipulation
 
 // // Path to the uploaded PDF file
 // const pdfPath = "./test.pdf";
@@ -13,8 +13,56 @@
 // // Directory to store images temporarily
 // const tempDir = path.join(__dirname, "temp_images");
 
-// // Function to ensure temporary directory exists
+// // Ensure the temporary directory exists
 // fs.ensureDirSync(tempDir);
+
+// // Function to process and enhance an image for OCR
+// async function processImage(imagePath, side) {
+//   try {
+//     const buffer = fs.readFileSync(imagePath);
+//     const { width, height } = await sharp(buffer).metadata();
+
+//     // Determine crop dimensions for the side
+//     const cropOptions =
+//       side === "right"
+//         ? { left: width / 2, top: 0, width: width / 2, height: height }
+//         : { left: 0, top: 0, width: width / 2, height: height };
+
+//     // Crop the image
+//     const croppedBuffer = await sharp(buffer)
+//       .extract(cropOptions)
+//       .resize({
+//         width: Math.floor((width / 2) * 3), // Upscale to 3x for maximum clarity
+//         height: Math.floor(height * 3),
+//       })
+//       .toBuffer();
+
+//     // Advanced Preprocessing with enhanced techniques
+//     const preprocessedBuffer = await sharp(croppedBuffer)
+//       .grayscale() // Convert to grayscale
+//       .median(7) // Apply stronger median filter for noise reduction
+//       .normalize() // Normalize brightness and contrast
+//       .modulate({ contrast: 4, brightness: 1.3 }) // Boost contrast and adjust brightness
+//       .threshold(120) // Apply a stronger binary thresholding value
+//       .sharpen({ sigma: 2, m1: 1.5, m2: 0.5 }) // Sharpen edges with advanced parameters
+//       .blur(1) // Apply slight blur to reduce noise
+//       .toBuffer();
+
+//     // Save preprocessed image for debugging (optional)
+//     const preprocessedPath = imagePath.replace(".jpg", `_${side}_enhanced.jpg`);
+//     fs.writeFileSync(preprocessedPath, preprocessedBuffer);
+
+//     // Perform OCR on the preprocessed image
+//     const ocrResult = await Tesseract.recognize(preprocessedBuffer, "mar", {
+//       logger: (info) => console.log(info), // Log OCR progress
+//     });
+
+//     return ocrResult.data.text.trim();
+//   } catch (error) {
+//     console.error(`Error processing ${side} side of ${imagePath}:`, error);
+//     return "";
+//   }
+// }
 
 // // Function to convert PDF to images and extract text
 // async function extractTextFromPDF() {
@@ -23,12 +71,12 @@
 
 //     // Convert all pages of PDF to images
 //     const pdf2pic = fromPath(pdfPath, {
-//       density: 300,
+//       density: 600, // High DPI for better quality
 //       saveFilename: "page",
 //       savePath: tempDir,
 //       format: "jpg",
-//       width: 2480, // Width for A4 size at 300 DPI
-//       height: 3508, // Height for A4 size at 300 DPI
+//       width: 4960, // Ultra-high resolution
+//       height: 7016,
 //     });
 
 //     const results = await pdf2pic.bulk(-1); // Convert all pages
@@ -43,11 +91,12 @@
 //       console.log(`Processing ${result.name}...`);
 
 //       const imagePath = result.path;
-//       const ocrResult = await Tesseract.recognize(imagePath, "mar", {
-//         logger: (info) => console.log(info), // Log progress
-//       });
 
-//       extractedText += ocrResult.data.text + "\n";
+//       // Extract text from the left side first, then right side
+//       const leftText = await processImage(imagePath, "left");
+//       const rightText = await processImage(imagePath, "right");
+
+//       extractedText += leftText + "\n" + rightText + "\n";
 //     }
 
 //     // Write the extracted text to a file
@@ -55,7 +104,7 @@
 //     console.log(`Extracted text saved to ${outputFile}`);
 
 //     // Clean up temporary images
-//     // fs.emptyDirSync(tempDir);
+//     fs.emptyDirSync(tempDir);
 //     console.log("Temporary images cleaned up.");
 //   } catch (error) {
 //     console.error("Error during the process:", error);
@@ -65,7 +114,6 @@
 // // Start the process
 // extractTextFromPDF();
 
-// Import required modules
 const { fromPath } = require("pdf2pic");
 const fs = require("fs-extra");
 const path = require("path");
@@ -84,7 +132,7 @@ const tempDir = path.join(__dirname, "temp_images");
 // Function to ensure temporary directory exists
 fs.ensureDirSync(tempDir);
 
-// Function to split image into two halves and perform OCR
+// Function to process and enhance an image for OCR
 async function processImage(imagePath, side) {
   try {
     const buffer = fs.readFileSync(imagePath);
@@ -97,14 +145,33 @@ async function processImage(imagePath, side) {
         : { left: 0, top: 0, width: width / 2, height: height };
 
     // Crop the image
-    const croppedBuffer = await sharp(buffer).extract(cropOptions).toBuffer();
+    const croppedBuffer = await sharp(buffer)
+      .extract(cropOptions) // Crop to the required side
+      .resize({
+        width: Math.floor((width / 2) * 2), // Dynamically upscale for better readability
+        height: Math.floor(height * 2),
+      })
+      .toBuffer();
 
-    // Save cropped image for debugging (optional)
-    const croppedPath = imagePath.replace(".jpg", `_${side}.jpg`);
-    fs.writeFileSync(croppedPath, croppedBuffer);
+    // Preprocess the cropped image
+    const preprocessedBuffer = await sharp(croppedBuffer)
+      .grayscale() // Convert to grayscale
+      .blur(1) // Apply slight Gaussian blur to reduce noise
+      .normalize() // Normalize brightness and contrast
+      .threshold(128, { greyscale: true }) // Apply adaptive thresholding
+      .modulate({ contrast: 2.0 }) // Increase contrast
+      .sharpen() // Sharpen text edges
+      .toBuffer();
 
-    // Perform OCR on the cropped image
-    const ocrResult = await Tesseract.recognize(croppedBuffer, "mar", {
+    // Save preprocessed image for debugging (optional)
+    const preprocessedPath = imagePath.replace(
+      ".jpg",
+      `_${side}_processed.jpg`
+    );
+    fs.writeFileSync(preprocessedPath, preprocessedBuffer);
+
+    // Perform OCR on the preprocessed image
+    const ocrResult = await Tesseract.recognize(preprocessedBuffer, "mar", {
       logger: (info) => console.log(info), // Log OCR progress
     });
 
@@ -122,12 +189,12 @@ async function extractTextFromPDF() {
 
     // Convert all pages of PDF to images
     const pdf2pic = fromPath(pdfPath, {
-      density: 300,
+      density: 600, // High DPI for better quality
       saveFilename: "page",
       savePath: tempDir,
       format: "jpg",
-      width: 2480, // Width for A4 size at 300 DPI
-      height: 3508, // Height for A4 size at 300 DPI
+      width: 4960, // Ultra-high resolution
+      height: 7016,
     });
 
     const results = await pdf2pic.bulk(-1); // Convert all pages
@@ -143,11 +210,11 @@ async function extractTextFromPDF() {
 
       const imagePath = result.path;
 
-      // Extract text from right side first, then left side
-      const rightText = await processImage(imagePath, "right");
+      // Extract text from the left side first, then right side
       const leftText = await processImage(imagePath, "left");
+      const rightText = await processImage(imagePath, "right");
 
-      extractedText += rightText + "\n" + leftText + "\n";
+      extractedText += leftText + "\n" + rightText + "\n";
     }
 
     // Write the extracted text to a file
