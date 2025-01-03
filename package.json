@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "server": "nodemon server.js"
+    "server": "nodemon server.js",
+    "postinstall": "sudo apt-get install -y graphicsmagick imagemagick"
   },
   "author": "s chavan",
   "license": "ISC",
@@ -15,6 +16,7 @@
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cheerio": "^1.0.0-rc.12",
+    "gm": "^1.23.1",
     "cloudinary": "^2.1.0",
     "colors": "^1.4.0",
     "cors": "^2.8.5",
