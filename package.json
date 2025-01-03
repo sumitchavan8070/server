@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "server": "nodemon server.js",
-    "postinstall": "sudo apt-get install -y graphicsmagick imagemagick"
+    "postinstall": "apt-get install -y graphicsmagick imagemagick"
   },
   "author": "s chavan",
   "license": "ISC",
