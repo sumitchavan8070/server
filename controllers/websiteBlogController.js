@@ -13,10 +13,45 @@ exports.createBlog = async (req, res) => {
 };
 
 // Get all blogs
+// exports.getAllBlogs = async (req, res) => {
+//   try {
+//     const blogs = await WebsiteBlog.find();
+//     res.status(200).json({ success: true, data: blogs });
+//   } catch (error) {
+//     res.status(500).json({ success: false, message: error.message });
+//   }
+// };
+// controllers/websiteBlogController.js
 exports.getAllBlogs = async (req, res) => {
   try {
-    const blogs = await WebsiteBlog.find();
-    res.status(200).json({ success: true, data: blogs });
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    if (req.query.category) query.category = req.query.category;
+    if (req.query.search) {
+      query.$or = [
+        { "title.en": { $regex: req.query.search, $options: "i" } },
+        { "title.mr": { $regex: req.query.search, $options: "i" } },
+      ];
+    }
+
+    const totalItems = await WebsiteBlog.countDocuments(query);
+    const blogs = await WebsiteBlog.find(query).skip(skip).limit(limit);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        blogs,
+        categories: await WebsiteBlog.distinct("category"),
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(totalItems / limit),
+          totalItems,
+        },
+      },
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
