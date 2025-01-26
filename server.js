@@ -57,6 +57,9 @@ app.use("/api/v1/auth", require("./routes/userRoutes"));
 app.use("/api/v1/auth/coupons", require("./routes/couponRoutes"));
 app.use("/api/v1/admin/coupons", require("./routes/couponRoutes"));
 
+app.use("/api/v1/auth", require("./routes/websiteBlogRoute"));
+app.use("/api/v1/admin", require("./routes/websiteBlogRoute"));
+
 app.use("/api/v1/admin", require("./routes/adminRoutes"));
 app.use("/api/v1/auth/variable", require("./routes/constantsRoutes"));
 
