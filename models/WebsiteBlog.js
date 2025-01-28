@@ -1,4 +1,3 @@
-// models/WebsiteBlog.js
 const mongoose = require("mongoose");
 
 const websiteBlogSchema = new mongoose.Schema({
@@ -12,8 +11,12 @@ const websiteBlogSchema = new mongoose.Schema({
   },
   slug: { type: String, required: true, unique: true },
   date: { type: Date, default: Date.now },
-  category: { type: String, required: true },
-  tags: [{ type: String }],
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "WebsiteCategory",
+    required: true,
+  },
+  tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "WebsiteBlogTag" }],
   image: { type: String, required: true },
   author: { type: String, required: true },
   readingTime: { type: String, required: true },
