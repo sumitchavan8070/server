@@ -3,6 +3,7 @@ const userModel = require("../models/userModel");
 const JWT = require("jsonwebtoken");
 const GlobalPlan = require("../models/GlobalPlan");
 const { comparePasswordWithoutHashing } = require("../helpers/userHelper");
+require("dotenv").config();
 
 // //middleware
 // const requireSingIn = jwt({
@@ -687,31 +688,49 @@ const sendContactEmail = async (req, res) => {
   }
 
   try {
+    // Log environment variables (for debugging)
+    console.log("Sending contact email...");
+    console.log("SMTP User:", process.env.EMAIL_USER);
+    console.log(
+      "SMTP Pass:",
+      process.env.EMAIL_PASSWORD ? "Exists" : "Missing"
+    );
+
+    // Create transporter using SMTP settings
     let transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465, // Use 587 with secure: false if needed
+      secure: true, // true for port 465, false for 587
       auth: {
-        user: process.env.EMAIL_USER, // Your email
-        pass: process.env.EMAIL_PASS, // Your email app password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
       },
     });
 
+    // Email options
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: "contact@meadhikari.com",
       subject: "New Contact Form Submission",
       text: `You have a new message from:
-      
+
       Name: ${fullName}
       Phone: ${phone}
       City: ${city}
       Message: ${message}`,
     };
 
+    // Send email
     await transporter.sendMail(mailOptions);
+    console.log("Contact email sent successfully!");
+
     res.status(200).json({ message: "Email sent successfully" });
   } catch (error) {
     console.error("Error sending email:", error);
-    res.status(500).json({ error: "Failed to send email" });
+
+    res.status(500).json({
+      error: "Failed to send email. Please check server logs for details.",
+    });
   }
 };
 
