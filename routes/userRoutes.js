@@ -8,6 +8,7 @@ const {
   updateProfilePicture,
   updateUserSubscription,
   updateUserMobileNumber,
+  sendContactEmail,
 } = require("../controllers/userController");
 const {
   createExamCat,
@@ -124,5 +125,7 @@ router.get("/:id", getUserById);
 router.put("/:userId/updateMobile", updateUserMobileNumber);
 
 router.post("/app-update", appUpdate);
+
+router.post("/contactus", sendContactEmail);
 
 module.exports = router;

@@ -679,6 +679,42 @@ const updateUserSubscription = async (req, res) => {
   }
 };
 
+const sendContactEmail = async (req, res) => {
+  const { fullName, phone, city, message } = req.body;
+
+  if (!fullName || !phone || !city || !message) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER, // Your email
+        pass: process.env.EMAIL_PASS, // Your email app password
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: "contact@meadhikari.com",
+      subject: "New Contact Form Submission",
+      text: `You have a new message from:
+      
+      Name: ${fullName}
+      Phone: ${phone}
+      City: ${city}
+      Message: ${message}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error("Error sending email:", error);
+    res.status(500).json({ error: "Failed to send email" });
+  }
+};
+
 module.exports = {
   //requireSingIn,
   registerController,
@@ -690,4 +726,5 @@ module.exports = {
   updateProfilePicture,
   updateUserSubscription,
   updateUserMobileNumber,
+  sendContactEmail,
 };
