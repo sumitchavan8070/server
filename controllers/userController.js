@@ -15,7 +15,8 @@ require("dotenv").config();
 
 const registerController = async (req, res) => {
   try {
-    const { name, username, email, password, fcmToken } = req.body;
+    const { name, username, email, password, fcmToken, mobileNumber } =
+      req.body;
     //validation
     if (!name) {
       return res.status(400).send({
@@ -69,6 +70,7 @@ const registerController = async (req, res) => {
       email,
       password,
       fcmToken,
+      mobileNumber,
     }).save();
 
     return res.status(201).send({
