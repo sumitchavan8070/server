@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const couponController = require("../controllers/couponController");
 
-router.get("/", couponController.getAllCoupons);
+router.get("/all", couponController.getAllCoupons);
 
 // Create a new coupon
 router.post("/create", couponController.createCoupon);
