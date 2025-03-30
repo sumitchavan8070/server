@@ -106,6 +106,7 @@ const updateExamCategory = async (req, res) => {
       image,
       pdfFiles,
       categoryNumber,
+      landingPageSlug,
     } = req.body;
 
     // Validate categoryNumber to ensure it's a non-negative number
@@ -126,7 +127,15 @@ const updateExamCategory = async (req, res) => {
 
     const updatedCategory = await ExamCategory.findByIdAndUpdate(
       categoryId,
-      { catName, catShortName, description, image, pdfFiles, categoryNumber },
+      {
+        catName,
+        catShortName,
+        description,
+        image,
+        pdfFiles,
+        categoryNumber,
+        landingPageSlug,
+      },
       { new: true }
     );
 

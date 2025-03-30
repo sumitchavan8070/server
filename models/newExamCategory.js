@@ -17,6 +17,9 @@ const examCategorySchema = new mongoose.Schema({
     required: true,
     unique: true, // Ensure the index is unique
   },
+  landingPageSlug: {
+    type: String,
+  },
 });
 
 module.exports = mongoose.model("ExamCategory", examCategorySchema);

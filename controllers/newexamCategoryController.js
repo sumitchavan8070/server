@@ -15,13 +15,15 @@ const ExamCategory = require("../models/newExamCategory");
 // Create a new exam category
 const createExamCategory = async (req, res) => {
   try {
-    const { catName, description, image, pdfFiles } = req.body;
+    const { catName, description, image, pdfFiles, landingPageSlug } = req.body;
     const newCategory = new ExamCategory({
       catName,
       description,
       image,
       pdfFiles, // Add this line to include pdfFiles
+      landingPageSlug,
     });
+
     const savedCategory = await newCategory.save();
     res.status(201).json(savedCategory);
   } catch (error) {
@@ -59,10 +61,11 @@ const getExamCategories = async (req, res) => {
 const updateExamCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const { catName, description, image, pdfFiles } = req.body; // Include pdfFiles here
+    const { catName, description, image, pdfFiles, landingPageSlug } = req.body; // Include pdfFiles here
+
     const updatedCategory = await ExamCategory.findByIdAndUpdate(
       id,
-      { catName, description, image, pdfFiles }, // Add pdfFiles to update
+      { catName, description, image, pdfFiles, landingPageSlug }, // Add pdfFiles to update
       { new: true }
     );
     res.status(200).json(updatedCategory);
