@@ -54,6 +54,8 @@ chatSocket(io);
 
 //custome route
 app.use("/api/v1/auth", require("./routes/userRoutes"));
+app.use("/api/v1/auth/history", require("./routes/historyRoutes"));
+
 app.use("/api/v1/auth/coupons", require("./routes/couponRoutes"));
 app.use("/api/v1/admin/coupons", require("./routes/couponRoutes"));
 
